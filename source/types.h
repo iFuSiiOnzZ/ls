@@ -229,6 +229,34 @@ typedef struct asset_metadata_t
 
 static const asset_metadata_t g_AssetMetaData[] =
 {
+    // System predefined directory
+    {230,  57,  70, "windows",             u8"\ue70f"},
+    {168, 218, 220, "users",               u8"\uf74b"},
+    {168, 218, 220, "program files",       u8"\uf756"},
+    {168, 218, 220, "program files (x86)", u8"\uf756"},
+
+    // User predefined directory
+    {168, 218, 220, "contacts",  u8"\ufbc9"},
+    {168, 218, 220, "desktop",   u8"\uf108"},
+    {168, 218, 220, "documents", u8"\uf752"},
+    {168, 218, 220, "downloads", u8"\uf498"},
+    {168, 218, 220, "favorites", u8"\ufb9b"},
+    {168, 218, 220, "links",     u8"\uf0c1"},
+    {168, 218, 220, "music",     u8"\uf883"},
+    {168, 218, 220, "videos",    u8"\ufa66"},
+    {168, 218, 220, "pictures",  u8"\uf74e"},
+
+    // Other type of folders
+    {243, 114, 44, ".git",              u8"\ue702"},
+    {243, 114, 44, ".gitconfig",        u8"\ue702"},
+    {243, 114, 44, ".gitignore",        u8"\ue702"},
+    {243, 114, 44, ".gitattributes",    u8"\ue702"},
+    {249, 132, 74, ".config",           u8"\ue5fc"},
+    {255, 182,  0, "license.md",        u8"\ue60a"},
+    {255, 182,  0, "license",           u8"\ue60a"},
+    {255, 158,  0, "readme.md",         u8"\uf7fc"},
+    {255, 158,  0, "readme",            u8"\uf7fc"},
+
     // Windows executable and libraries
     {229, 107, 111, ".exe", u8"\ufb13"},
     {181, 101, 118, ".dll", u8"\uf1e1"},
@@ -319,6 +347,9 @@ static const asset_metadata_t g_AssetMetaData[] =
     { 39, 125, 161, ".json",         u8"\ufb25"},
     {249, 132,  74, ".xml",          u8"\uf72d"},
     {249, 132,  74, ".ini",          u8"\ue615"},
+    {249, 132,  74, ".cfg",          u8"\ue615"},
+    {166, 117, 161, ".yml",          u8"\ue009"},
+    {239, 217, 206, ".md",           u8"\uf853"},
 
     // Fonts
     {144, 190, 109, ".ttf",   u8"\uf031"},
@@ -361,26 +392,5 @@ static const asset_metadata_t g_AssetMetaData[] =
     {249, 199, 79, ".tlog",  u8"\uf18d"},
     {249, 199, 79, ".msql",  u8"\uf1c0"},
     {249, 199, 79, ".mysql", u8"\uf1c0"},
-    {249, 199, 79, ".cache", u8"\uf1c0" },
-
-    // System predefined directory
-    {230,  57,  70, "windows",             u8"\ue70f"},
-    {168, 218, 220, "users",               u8"\uf74b"},
-    {168, 218, 220, "program files",       u8"\uf756"},
-    {168, 218, 220, "program files (x86)", u8"\uf756"},
-
-    // User predefined directory
-    {168, 218, 220, "contacts",  u8"\ufbc9"},
-    {168, 218, 220, "desktop",   u8"\uf108"},
-    {168, 218, 220, "documents", u8"\uf752"},
-    {168, 218, 220, "downloads", u8"\uf498"},
-    {168, 218, 220, "favorites", u8"\ufb9b"},
-    {168, 218, 220, "links",     u8"\uf0c1"},
-    {168, 218, 220, "music",     u8"\uf883"},
-    {168, 218, 220, "videos",    u8"\ufa66"},
-    {168, 218, 220, "pictures",  u8"\uf74e"},
-
-    // Other type of folders
-    {243, 114, 44, ".git",    u8"\ue5fb"},
-    {249, 132, 74, ".config", u8"\ue5fc"}
+    {249, 199, 79, ".cache", u8"\uf1c0"}
 };

@@ -124,7 +124,7 @@ static void color_printf_vt(int r, int g, int b, const char *fmt, ...)
  * as DARKGREY, system files as RED and symbolic kink as CYAN.
  *
  * @param asset         pointer to the asset (file or directory)
- * @return ETextColor   the color used fpr printing
+ * @return ETextColor   the color used for printing
  */
 static text_color_t GetTextNameColor(const asset_t *asset)
 {
