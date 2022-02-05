@@ -51,24 +51,24 @@ BOOL StringEndsWith(const char *str, const char *suffix);
 
 /**
  * @brief Given a filename, extract directory from filename.
- * If no directory is found the current working directory
- * will be returned.
+ * By default it will return the filename if path can not be
+ * extracted.
  *
  * @param path          name of the file to extract the directory
- * @param buffer        buffer char array where data is stored
+ * @param buffer        char array where data is stored
  * @param bufferSize    size in bytes of the buffer
- * @return const char*  pointer to the buffer array if directory extracted, NULL otherwise
+ * @return const char*  pointer to the buffer array if directory extracted
  */
 const char *GetDirectoryFromPath(const char *path, char *buffer, size_t bufferSize);
 
 /**
  * @brief Get a human readable representation for the size,
- * if the size is zero a hyphen it will shown instead.
- * print sizes like 1K 234M 2G etc.
+ * if the size is zero a hyphen it will shown instead,
+ * print sizes like 1K / 234M / 2G / etc.
  *
  * This function can not multi-threaded as it has a
  * static member variable to store the file size
- * as string.
+ * as string and returns a pointer to it.
  *
  * @param bytes         size of the asset in bytes
  * @return const char*  human readable representation
@@ -84,10 +84,10 @@ const char *GetFileSizeAsText(size_t bytes);
 const char *GetWorkingDirectory();
 
 /**
- * @brief Given a path it ways it is current path, '.',
+ * @brief Given a path it says it is current path, '.',
  * or parent path, '..'.
  *
  * @param path      relative path
- * @return BOOL     TRUE if it
+ * @return BOOL     TRUE if it is '.' or '..', FALSE otherwise
  */
 BOOL IsDotPath(const char *path);

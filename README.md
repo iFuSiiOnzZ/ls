@@ -1,11 +1,10 @@
 
 # ls.exe
----
-_**ls**_ is a replacement for the _**dir**_ command, it is inspired by the unix [ls command](https://en.wikipedia.org/wiki/Ls) to list the content of directory.
+
+_**ls**_ is a replacement for the _**dir**_ command, it is inspired by the Unix [ls command](https://en.wikipedia.org/wiki/Ls) to list the content of directory.
 
 ![Screenshots of ls](resources/screenshot.jpg)
 
----
 ## Table of Contents
 - [Features](#features)
 - [Usage](#usage)
@@ -14,18 +13,16 @@ _**ls**_ is a replacement for the _**dir**_ command, it is inspired by the unix 
 - [Donations](#donations)
 - [License](#license)
 
----
-# Features
+## Features
 * Show file type `d` for directory, `l` for symbolic link, `-` any other type
 * Show user file permissions `r` for read, `w` for write, `x` execution and `-` no permission
 * File size displayed in Bytes, MegaBytes, etc. `-` if size can not be retrieved
 * To which group the file belongs or `-` if it can not be retrieved
 * The owner of the file or `-` if it can not be retrieved
-* Creation / Access / Modification date, by default creation in case of short use the sort date
-* Icons, currently hardcoded, use [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts), you console has to be able to display [UTF-8](https://en.wikipedia.org/wiki/UTF-8)
+* Creation / Access / Modification date, by default creation in case of sort uses the sort date
+* Icons, currently hard-coded, uses [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts), your console has to be able to display [UTF-8](https://en.wikipedia.org/wiki/UTF-8)
 
----
-# Usage
+## Usage
 ```
 Usage
   ls.exe [options] [files...]
@@ -78,8 +75,7 @@ function List-Dir()
 Set-Alias -name 'ls' -value List-Dir -Option AllScope
 ```
 
----
-# Project distribution
+## Project distribution
 ```
 | -> utils
     | -> cl.bat             Searching and loading visual studio environment [vcvars.bat]
@@ -95,11 +91,10 @@ Set-Alias -name 'ls' -value List-Dir -Option AllScope
     | -> screenshot.jpg     Screenshot used on this README
 ```
 
----
-# Roadmap
+## Roadmap
 * Consider configuration file for colors and icons
----
-# Donations
+
+## Donations
 This is free, open-source software. If you'd like to support the development of future projects, or say thanks for this one, you can donate:
 | Crypto | Address | Network |
 |----------|:-------------:|------:|
@@ -107,6 +102,5 @@ This is free, open-source software. If you'd like to support the development of 
 | ETH | 0x8e249fb24e71459184c836f9fc53d32f09d44555 | ERC20 |
 | USDT | TXkofuYzGiLTS6GP2K2RMKJ4y6xqBZV8Pf | TRC20 |
 
----
-# License
+## License
 ls.exe is distributed under the terms of the Apache License Version 2.0. A complete version of the license is available in the [LICENSE.md](LICENSE.md) in this repository. Any contribution made to this project will be licensed under the Apache License Version 2.0.

@@ -16,18 +16,18 @@ void GetPermissions(const char *path, asset_t *asset);
  * @brief Get the owner and the owner domain of the asset.
  * By default an hyphen it will be show.
  *
- * @param assetPath full path of the asset
+ * @param path      full path of the asset
  * @param asset     pointer of the asset data structure where information is stored
  * @return BOOL     TRUE if owner and domain can be retrieved, FALSE otherwise
  */
-BOOL GetOwnerAndDomain(const char *assetPath, asset_t *asset);
+BOOL GetOwnerAndDomain(const char *path, asset_t *asset);
 
 /**
- * @brief Get symbolic link real path
+ * @brief Get symbolic link real path.
  *
  * @param path      full path of the symbolic link
  * @param asset     pointer of the asset data structure where information is stored
- * @return BOOL     TRUE is path found, FALSE otherwise
+ * @return BOOL     TRUE is path can be retrieved, FALSE otherwise
  */
 BOOL GetLinkTarget(const char *path, asset_t *asset);
 
@@ -42,7 +42,7 @@ void TranslateAttributes(size_t attributes, asset_t *asset);
 /**
  * @brief Given a path it says is the valid directory or not.
  *
- * @param path  full directory path
+ * @param path  full path
  * @return BOOL TRUE is valid, FALSE otherwise
  */
 BOOL IsValidDirectory(const char *path);
@@ -50,13 +50,15 @@ BOOL IsValidDirectory(const char *path);
 /**
  * @brief Given a path it says is the valid document or not.
  *
- * @param path  full document path
+ * @param path  full path
  * @return BOOL TRUE is valid, FALSE otherwise
  */
 BOOL IsValidDocument(const char *path);
 
 /**
- * @brief Get the full size of the asset. By default size is split
+ * @brief Translate the Win32 file size format to bytes size.
+ *
+ * By default size is split
  * in 2 parts, low and high. (high * (MAXDWORD+1)) + low
  *
  * @param fd        pointer to a valid WIN32_FIND_DATAA data structure
@@ -65,13 +67,13 @@ BOOL IsValidDocument(const char *path);
 size_t TranslateFileSize(WIN32_FIND_DATAA *fd);
 
 /**
- * @brief Enable virtual terminal
+ * @brief Enable virtual terminal.
  * https://docs.microsoft.com/es-es/windows/console/console-virtual-terminal-sequences
  */
 BOOL EnableVirtualTerminal();
 
 /**
- * @brief Disable virtual terminal
+ * @brief Disable virtual terminal.
  * https://docs.microsoft.com/es-es/windows/console/console-virtual-terminal-sequences
  */
 BOOL DisableVirtualTerminal();

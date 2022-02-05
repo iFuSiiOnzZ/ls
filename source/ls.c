@@ -36,12 +36,11 @@ static BOOL  g_PrintWithColor = FALSE;  // Colorize the output or not
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * @brief Prints a text on the screen with a given color.
- * if the global variable 'g_PrintWithColor' is not set
- * the text it will be printed using the default console
- * text color.
+ * @brief Prints text on the screen with a given color. If the global variable
+ * 'g_PrintWithColor' is not set the text it will be printed using the default
+ * console text color.
  *
- * @param textColor text color, see 'ETextColor'
+ * @param textColor text color, see 'ETextColor' (types.h)
  * @param fmt       format of the text or the text itself
  * @param ...       variable arguments list
  */
@@ -77,10 +76,9 @@ static void color_printf(text_color_t textColor, const char *fmt, ...)
 }
 
 /**
- * @brief Prints a text on the screen with a given color.
- * if the global variable 'g_PrintWithColor' is not set
- * the text it will be printed using the default console
- * text color.
+ * @brief Prints text on the screen with a given color. If the global variable
+ * 'g_PrintWithColor' is not set the text it will be printed using the default
+ * console text color.
  *
  * It makes use of the Virtual Console sequence
  * https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences
@@ -119,14 +117,14 @@ static void color_printf_vt(int r, int g, int b, const char *fmt, ...)
 
 /**
  * @brief Given an asset with its properties return the color used for
- * printing based on the asset attributes.
+ * printing based on the asset type.
  *
- * Default color is WHITE. * Directories will be print as GREEN.
+ * Default color is WHITE. Directories will be print as GREEN.
  * Encrypted files as BLUE, compress files as MAGENTA, temporary
  * as DARKGREY, system files as RED and symbolic kink as CYAN.
  *
  * @param asset         pointer to the asset (file or directory)
- * @return ETextColor   the color used to print
+ * @return ETextColor   the color used fpr printing
  */
 static text_color_t GetTextNameColor(const asset_t *asset)
 {
@@ -161,14 +159,14 @@ static text_color_t GetTextNameColor(const asset_t *asset)
 }
 
 /**
- * @brief Given an asset return char with its representation.
+ * @brief Given an asset, return char with its representation.
  * It tells us if is a directory, symbolic link or other type.
  *
  * 'd' for directory
  * 'l' for symbolic links
  * '-' for any other format
  *
- * @param data      pointer to the asset (file or directory)
+ * @param data      pointer to the asset data structure
  * @return char     'd', 'l' or '-'
  */
 static char GetContentType(const asset_t *data)
@@ -183,12 +181,11 @@ static char GetContentType(const asset_t *data)
 }
 
 /**
- * @brief Get the icon based on the asset extension or attributes.
- * If the extension is not found a predefined icon for based
- * on the attributes it will be given.
+ * @brief Get the metadata based on the asset extension. If the extension is not
+ * found a predefined metadata based on the type it will be returned.
  *
- * @param data          pointer to the asset (file or directory)
- * @return const char*  utf-8 encoding of the icon
+ * @param data                      valid pointer to the asset
+ * @return const asset_metadata_t*  pointer to the metadata structure
  */
 static const asset_metadata_t *GetAssetMetadata(const asset_t *data)
 {
