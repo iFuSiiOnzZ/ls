@@ -513,6 +513,32 @@ static void PrintAssetInformation(const directory_t *content, const char *direct
     }
 }
 
+/**
+ * @brief Display the information of the available extensions. For each entry,
+ * a line will be printed with the RGB color values, the icon and the extension
+ * name. If if the possible the line will have the predefined color of the
+ * extension.
+ *
+ * @param arguments pointer to the parsed arguments structure
+ */
+static void ShowMetaData(const arguments_t *arguments)
+{
+    for (size_t i = 0; i < ARRAY_SIZE(g_AssetMetaData); ++i)
+    {
+        const char fmt[] = "(%3d, %3d, %3d)  %s  %s\n";
+        const asset_metadata_t *m = &g_AssetMetaData[i];
+
+        if (arguments->virtualTerminal)
+        {
+            color_printf_vt(m->r, m->g, m->b, fmt, m->r, m->g, m->b, m->icon, m->ext);
+        }
+        else
+        {
+            printf_s(fmt, m->r, m->g, m->b, m->icon, m->ext);
+        }
+    }
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 int main(int argc, char *argv[])
@@ -525,6 +551,7 @@ int main(int argc, char *argv[])
     #endif
 
     arguments_t arguments = ParseArguments(argc, argv);
+    g_PrintWithColor = arguments.colors;
 
     if (arguments.showIcons && !SetConsoleOutputCP(65001))
     {
@@ -540,11 +567,7 @@ int main(int argc, char *argv[])
 
     if (arguments.showMetaData)
     {
-        for (size_t i = 0; i < ARRAY_SIZE(g_AssetMetaData); ++i)
-        {
-            printf_s("% 30s  %s\n", g_AssetMetaData[i].ext, g_AssetMetaData[i].icon);
-        }
-
+        ShowMetaData(&arguments);
         return EXIT_SUCCESS;
     }
 
@@ -565,7 +588,6 @@ int main(int argc, char *argv[])
         AddDirectoryToList(&arguments, GetWorkingDirectory());
     }
 
-    g_PrintWithColor = arguments.colors;
     BOOL extraDirs = arguments.currentDir->next != NULL || arguments.recursiveList;
 
     while (arguments.currentDir != NULL)
