@@ -75,7 +75,12 @@ function List-Dir()
 Set-Alias -name 'ls' -value List-Dir -Option AllScope
 ```
 
-There is an extra hidden option, `--smd` (show metadata), which shows a list of available extensions with their color and icon for each.
+There is an extra hidden option, `--smd` (show metadata), which shows a list of available extensions with their color and icon of each.
+
+```text
+# Output format
+(r, g, b)  icons  extension
+```
 
 ## Project distribution
 ```
