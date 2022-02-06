@@ -61,18 +61,25 @@ TIPS
 If you are using Command Prompt take into consideration to make an [alias using doskey](https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/doskey) with the parameters you mostly find useful in your day to day. For Powershell make a function in your profile script and bind it to an [alias using Set-Alias](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/set-alias?view=powershell-7.2) name.
 
 ```cmd
-Command prompt
+# Command prompt
 doskey ls=ls.exe --icons --colors --virterm --group-directories-first $*
 ```
 
 ```powershell
-Powershell
+# Powershell
 function List-Dir()
 {
     ls.exe --icons --colors --virterm --group-directories-first @args
 }
 
 Set-Alias -name 'ls' -value List-Dir -Option AllScope
+```
+
+There is an extra hidden option, `--smd` (show metadata), which shows a list of available extensions with their color and icon of each.
+
+```text
+# Output format
+(r, g, b)  icons  extension
 ```
 
 ## Project distribution

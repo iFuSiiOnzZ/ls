@@ -170,8 +170,8 @@ typedef struct directory_list_t
  * @brief Contais information of the user input arguments.
  *
  * 'showAll'                : '-a', '--all'         show all assets found, '.', '..'  and hidden included
- * 'showMetaData'           : '-l', '--long'        show extra information as size, creation date, permissions, etc
  * 'showAlmostAll'          : '-A', '--almost-all'  show all assets found, hidden included but not '.' and '..'
+ * 'showLongFormat'         : '-l', '--long'        show extra information as size, creation date, permissions, etc
  *
  * 'reverseOrder'           : '-r', '--reverse'     reverse the sort order
  * 'recursiveList'          : '-R', '--recursive'   recursive list folders
@@ -181,7 +181,9 @@ typedef struct directory_list_t
  *
  * 'showHelp'               : '-?', '--help'        show list of commands available
  * 'showVersion'            : '-v', '--version'     show current version number
- * 'showAvailableIcons'     :       '--sai'         display icons and the file extensions
+ *
+ * 'showMetaData'           :       '--smd'         display colors, icons and the file extensions
+ * 'virtualTerminal'        :       '--virterm'     use virtual terminal for better color display
  *
  * 'sortField'              :                       which field is used to sort (name, size, owner, group, etc)
  * 'currentDir', 'lastDir'  :                       linked list of the directories to list
@@ -189,8 +191,8 @@ typedef struct directory_list_t
 typedef struct arguments_t
 {
     BOOL showAll;
-    BOOL showMetaData;
     BOOL showAlmostAll;
+    BOOL showLongFormat;
 
     BOOL reverseOrder;
     BOOL recursiveList;
@@ -201,8 +203,8 @@ typedef struct arguments_t
     BOOL showHelp;
     BOOL showVersion;
 
+    BOOL showMetaData;
     BOOL virtualTerminal;
-    BOOL showAvailableIcons;
 
     sort_by_e sortField;
     directory_list_t *currentDir, *lastDir;
