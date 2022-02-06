@@ -6,7 +6,6 @@
 #define STARTUP_CONTAINER_SIZE  128  // startup capacity of the list container
 
 #define PATH_SIZE MAX_PATH          // number of characters used for the path
-#define PATTERN_SIZE    32          // number of characters used for the search pattern
 #define DATE_SIZE       32          // number of characters used for the date
 
 #define DOMAIN_SIZE 32              // number of characters used for the user domain (group)
@@ -38,7 +37,7 @@ typedef enum text_color_t
 } text_color_t;
 
 /**
- * @brief Enumerator telling which sort has to be applied.
+ * @brief Enumerator indicating what kind of sorting should be applied.
  */
 typedef enum sort_by_e
 {
@@ -58,15 +57,8 @@ typedef enum sort_by_e
 
 ///////////////////////////////////////////////////////////////////////////////
 
-typedef struct path_t
-{
-    char path[PATH_SIZE];
-    char pattern[PATTERN_SIZE];
-} path_t;
-
 /**
- * @brief Contains the user access rights
- * for a given asset for the current user.
+ * @brief User access rights for a given asset.
  *
  * 'read'       : read permissions      'r'
  * 'write'      : write permissions     'w'
@@ -80,8 +72,8 @@ typedef struct access_rights_t
 } access_rights_t;
 
 /**
- * @brief Has information about the asset type.
- * it could be a directory, a document or symlink.
+ * @brief Information about the asset type.
+ * it could be a directory, document, symlink, etc
  */
 typedef struct asset_type_t
 {
@@ -99,12 +91,12 @@ typedef struct asset_type_t
 } asset_type_t;
 
 /**
- * @brief Information about the creation time,
- * last modification, etc of the asset.
+ * @brief Information about the creation date,
+ * last modification and write of the asset.
  *
  * 'access'         : last time it was accessed
  * 'creation'       : asset creation timestamp
- * 'modification'   : last time it as modify
+ * 'modification'   : last time it was modify
  */
 typedef struct timestamp_t
 {
@@ -115,16 +107,19 @@ typedef struct timestamp_t
 
 /**
  * @brief It contains the main information of an asset.
- * By asset we understand file or directory.
+ * By asset we understand document or directory.
  *
  * 'accessRights'   : see 'access_rights_t' structure
- * 'asset_type_t'   : type of the asset (hidden, symlink, temporal, directory, etc)
- * 'timestamp'      : FILETIME timestamp, creation, modification ,etc
+ * 'type'           : see 'asset_type_t' structure
+ *
+ * 'timestamp'      : FILETIME timestamp, creation, modification, based on sorting (by default creation)
  * 'size'           : size in bytes (only for files, directory don't have size)
  *
- * 'date'           : creation date
+ * 'date'           : creation | accessed | modified date, based on sorting (by default creation)
  * 'name'           : name of the asset
+ *
  * 'link'           : only for symlinks, contains the real path
+ * 'path'           : full path to the asset
  *
  * 'domain'         : domain of the asset owner
  * 'owner'          : owner of the asset
@@ -160,7 +155,7 @@ typedef struct directory_t
 } directory_t;
 
 /**
- * @brief Linked list that contains the directory to list.
+ * @brief Linked list that contains the directories to list.
  *
  * 'next'   pointer to the next directory to list
  * 'path'   current directory path to list
@@ -172,20 +167,21 @@ typedef struct directory_list_t
 } directory_list_t;
 
 /**
- * @brief It has the program arguments.
+ * @brief Contais information of the user input arguments.
  *
- * 'showAll'                : '-a', '--all'         show all assets found
+ * 'showAll'                : '-a', '--all'         show all assets found, '.', '..'  and hidden included
  * 'showMetaData'           : '-l', '--long'        show extra information as size, creation date, permissions, etc
+ * 'showAlmostAll'          : '-A', '--almost-all'  show all assets found, hidden included but not '.' and '..'
  *
  * 'reverseOrder'           : '-r', '--reverse'     reverse the sort order
  * 'recursiveList'          : '-R', '--recursive'   recursive list folders
  *
- * 'colors'                 : '--colors'            colorize the output
- * 'showIcons'              : '--icons'             show icons related to the asset
+ * 'colors'                 :       '--colors'      colorize the output
+ * 'showIcons'              :       '--icons'       show icons related to the asset
  *
  * 'showHelp'               : '-?', '--help'        show list of commands available
  * 'showVersion'            : '-v', '--version'     show current version number
- * 'showAvailableIcons'     : '--sai'               display icons and the file extensions
+ * 'showAvailableIcons'     :       '--sai'         display icons and the file extensions
  *
  * 'sortField'              :                       which field is used to sort (name, size, owner, group, etc)
  * 'currentDir', 'lastDir'  :                       linked list of the directories to list
@@ -213,7 +209,12 @@ typedef struct arguments_t
 } arguments_t;
 
 /**
- * @brief Data structure containing the associated icon of a file extension.
+ * @brief Data structure containing the associated icon of a file extension
+ * and it's color. The RGB color it is only used with virtual terminal.
+ *
+ * 'r'    : red color
+ * 'g'    : green color
+ * 'b'    : blue color
  *
  * 'ext'  : extension name, has to include the dot '.'
  * 'icons': UTF-8 string representation the icon
@@ -228,6 +229,34 @@ typedef struct asset_metadata_t
 
 static const asset_metadata_t g_AssetMetaData[] =
 {
+    // System predefined directory
+    {230,  57,  70, "windows",             u8"\ue70f"},
+    {168, 218, 220, "users",               u8"\uf74b"},
+    {168, 218, 220, "program files",       u8"\uf756"},
+    {168, 218, 220, "program files (x86)", u8"\uf756"},
+
+    // User predefined directory
+    {168, 218, 220, "contacts",  u8"\ufbc9"},
+    {168, 218, 220, "desktop",   u8"\uf108"},
+    {168, 218, 220, "documents", u8"\uf752"},
+    {168, 218, 220, "downloads", u8"\uf498"},
+    {168, 218, 220, "favorites", u8"\ufb9b"},
+    {168, 218, 220, "links",     u8"\uf0c1"},
+    {168, 218, 220, "music",     u8"\uf883"},
+    {168, 218, 220, "videos",    u8"\ufa66"},
+    {168, 218, 220, "pictures",  u8"\uf74e"},
+
+    // Other type of folders
+    {243, 114, 44, ".git",              u8"\ue702"},
+    {243, 114, 44, ".gitconfig",        u8"\ue702"},
+    {243, 114, 44, ".gitignore",        u8"\ue702"},
+    {243, 114, 44, ".gitattributes",    u8"\ue702"},
+    {249, 132, 74, ".config",           u8"\ue5fc"},
+    {255, 182,  0, "license.md",        u8"\ue60a"},
+    {255, 182,  0, "license",           u8"\ue60a"},
+    {255, 158,  0, "readme.md",         u8"\uf7fc"},
+    {255, 158,  0, "readme",            u8"\uf7fc"},
+
     // Windows executable and libraries
     {229, 107, 111, ".exe", u8"\ufb13"},
     {181, 101, 118, ".dll", u8"\uf1e1"},
@@ -318,6 +347,9 @@ static const asset_metadata_t g_AssetMetaData[] =
     { 39, 125, 161, ".json",         u8"\ufb25"},
     {249, 132,  74, ".xml",          u8"\uf72d"},
     {249, 132,  74, ".ini",          u8"\ue615"},
+    {249, 132,  74, ".cfg",          u8"\ue615"},
+    {166, 117, 161, ".yml",          u8"\ue009"},
+    {239, 217, 206, ".md",           u8"\uf853"},
 
     // Fonts
     {144, 190, 109, ".ttf",   u8"\uf031"},
@@ -360,26 +392,5 @@ static const asset_metadata_t g_AssetMetaData[] =
     {249, 199, 79, ".tlog",  u8"\uf18d"},
     {249, 199, 79, ".msql",  u8"\uf1c0"},
     {249, 199, 79, ".mysql", u8"\uf1c0"},
-    {249, 199, 79, ".cache", u8"\uf1c0" },
-
-    // System predefined directory
-    {230,  57,  70, "windows",             u8"\ue70f"},
-    {168, 218, 220, "users",               u8"\uf74b"},
-    {168, 218, 220, "program files",       u8"\uf756"},
-    {168, 218, 220, "program files (x86)", u8"\uf756"},
-
-    // User predefined directory
-    {168, 218, 220, "contacts",  u8"\ufbc9"},
-    {168, 218, 220, "desktop",   u8"\uf108"},
-    {168, 218, 220, "documents", u8"\uf752"},
-    {168, 218, 220, "downloads", u8"\uf498"},
-    {168, 218, 220, "favorites", u8"\ufb9b"},
-    {168, 218, 220, "links",     u8"\uf0c1"},
-    {168, 218, 220, "music",     u8"\uf883"},
-    {168, 218, 220, "videos",    u8"\ufa66"},
-    {168, 218, 220, "pictures",  u8"\uf74e"},
-
-    // Other type of folders
-    {243, 114, 44, ".git",    u8"\ue5fb"},
-    {249, 132, 74, ".config", u8"\ue5fc"}
+    {249, 199, 79, ".cache", u8"\uf1c0"}
 };
