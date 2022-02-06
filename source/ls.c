@@ -36,12 +36,11 @@ static BOOL  g_PrintWithColor = FALSE;  // Colorize the output or not
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * @brief Prints a text on the screen with a given color.
- * if the global variable 'g_PrintWithColor' is not set
- * the text it will be printed using the default console
- * text color.
+ * @brief Prints text on the screen with a given color. If the global variable
+ * 'g_PrintWithColor' is not set the text it will be printed using the default
+ * console text color.
  *
- * @param textColor text color, see 'ETextColor'
+ * @param textColor text color, see 'ETextColor' (types.h)
  * @param fmt       format of the text or the text itself
  * @param ...       variable arguments list
  */
@@ -77,10 +76,9 @@ static void color_printf(text_color_t textColor, const char *fmt, ...)
 }
 
 /**
- * @brief Prints a text on the screen with a given color.
- * if the global variable 'g_PrintWithColor' is not set
- * the text it will be printed using the default console
- * text color.
+ * @brief Prints text on the screen with a given color. If the global variable
+ * 'g_PrintWithColor' is not set the text it will be printed using the default
+ * console text color.
  *
  * It makes use of the Virtual Console sequence
  * https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences
@@ -119,14 +117,14 @@ static void color_printf_vt(int r, int g, int b, const char *fmt, ...)
 
 /**
  * @brief Given an asset with its properties return the color used for
- * printing based on the asset attributes.
+ * printing based on the asset type.
  *
- * Default color is WHITE. * Directories will be print as GREEN.
+ * Default color is WHITE. Directories will be print as GREEN.
  * Encrypted files as BLUE, compress files as MAGENTA, temporary
  * as DARKGREY, system files as RED and symbolic kink as CYAN.
  *
  * @param asset         pointer to the asset (file or directory)
- * @return ETextColor   the color used to print
+ * @return ETextColor   the color used for printing
  */
 static text_color_t GetTextNameColor(const asset_t *asset)
 {
@@ -161,14 +159,14 @@ static text_color_t GetTextNameColor(const asset_t *asset)
 }
 
 /**
- * @brief Given an asset return char with its representation.
+ * @brief Given an asset, return char with its representation.
  * It tells us if is a directory, symbolic link or other type.
  *
  * 'd' for directory
  * 'l' for symbolic links
  * '-' for any other format
  *
- * @param data      pointer to the asset (file or directory)
+ * @param data      pointer to the asset data structure
  * @return char     'd', 'l' or '-'
  */
 static char GetContentType(const asset_t *data)
@@ -183,12 +181,11 @@ static char GetContentType(const asset_t *data)
 }
 
 /**
- * @brief Get the icon based on the asset extension or attributes.
- * If the extension is not found a predefined icon for based
- * on the attributes it will be given.
+ * @brief Get the metadata based on the asset extension. If the extension is not
+ * found a predefined metadata based on the type it will be returned.
  *
- * @param data          pointer to the asset (file or directory)
- * @return const char*  utf-8 encoding of the icon
+ * @param data                      valid pointer to the asset
+ * @return const asset_metadata_t*  pointer to the metadata structure
  */
 static const asset_metadata_t *GetAssetMetadata(const asset_t *data)
 {
@@ -250,8 +247,8 @@ static void ParseShortArgument(const char *arg, arguments_t *arguments)
         switch (*c)
         {
             case 'A': arguments->showAlmostAll = arguments->showAll = TRUE; break;
+            case 'l': arguments->showLongFormat = TRUE; break;
             case 'R': arguments->recursiveList = TRUE; break;
-            case 'l': arguments->showMetaData = TRUE; break;
             case 'r': arguments->reverseOrder = TRUE; break;
             case 'v': arguments->showVersion = TRUE; break;
             case '?': arguments->showHelp = TRUE; break;
@@ -297,7 +294,7 @@ static const char **ParseLongArgument(const char **arg, arguments_t *arguments)
     }
     else if (strcmp(*arg, "--long") == 0)
     {
-        arguments->showMetaData = TRUE;
+        arguments->showLongFormat = TRUE;
     }
     else if (strcmp(*arg, "--help") == 0)
     {
@@ -315,10 +312,10 @@ static const char **ParseLongArgument(const char **arg, arguments_t *arguments)
     {
         arguments->showAll = TRUE;
     }
-    else if (strcmp(*arg, "--sai") == 0)
+    else if (strcmp(*arg, "--smd") == 0)
     {
         arguments->showIcons = TRUE;
-        arguments->showAvailableIcons = TRUE;
+        arguments->showMetaData = TRUE;
     }
     else if (strcmp(*arg, "--sort") == 0)
     {
@@ -414,7 +411,7 @@ static void PrintAssetInformation(const directory_t *content, const char *direct
     size_t ownerLength = 0, domainLength = 0;
     size_t directoryLength = strlen(currentPath);
 
-    for (size_t i = 0; i < content->size && arguments->showMetaData; ++i)
+    for (size_t i = 0; i < content->size && arguments->showLongFormat; ++i)
     {
         size_t s = strlen(content->data[i].domain);
         domainLength = domainLength < s ? s : domainLength;
@@ -425,7 +422,7 @@ static void PrintAssetInformation(const directory_t *content, const char *direct
 
     for (size_t i = 0; i < content->size; ++i)
     {
-        if (!arguments->showMetaData)
+        if (!arguments->showLongFormat)
         {
             text_color_t textColor = GetTextNameColor(&content->data[i]);
             color_printf(textColor, "%s\n", content->data[i].name);
@@ -516,6 +513,32 @@ static void PrintAssetInformation(const directory_t *content, const char *direct
     }
 }
 
+/**
+ * @brief Display the information of the available extensions. For each entry,
+ * a line will be printed with the RGB color values, the icon and the extension
+ * name. If if the possible the line will have the predefined color of the
+ * extension.
+ *
+ * @param arguments pointer to the parsed arguments structure
+ */
+static void ShowMetaData(const arguments_t *arguments)
+{
+    for (size_t i = 0; i < ARRAY_SIZE(g_AssetMetaData); ++i)
+    {
+        const char fmt[] = "(%3d, %3d, %3d)  %s  %s\n";
+        const asset_metadata_t *m = &g_AssetMetaData[i];
+
+        if (arguments->virtualTerminal)
+        {
+            color_printf_vt(m->r, m->g, m->b, fmt, m->r, m->g, m->b, m->icon, m->ext);
+        }
+        else
+        {
+            printf_s(fmt, m->r, m->g, m->b, m->icon, m->ext);
+        }
+    }
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 int main(int argc, char *argv[])
@@ -528,6 +551,7 @@ int main(int argc, char *argv[])
     #endif
 
     arguments_t arguments = ParseArguments(argc, argv);
+    g_PrintWithColor = arguments.colors;
 
     if (arguments.showIcons && !SetConsoleOutputCP(65001))
     {
@@ -541,13 +565,9 @@ int main(int argc, char *argv[])
         printf_s("Can not enable virtual terminal.\n\n");
     }
 
-    if (arguments.showAvailableIcons)
+    if (arguments.showMetaData)
     {
-        for (size_t i = 0; i < ARRAY_SIZE(g_AssetMetaData); ++i)
-        {
-            printf_s("% 30s  %s\n", g_AssetMetaData[i].ext, g_AssetMetaData[i].icon);
-        }
-
+        ShowMetaData(&arguments);
         return EXIT_SUCCESS;
     }
 
@@ -568,7 +588,6 @@ int main(int argc, char *argv[])
         AddDirectoryToList(&arguments, GetWorkingDirectory());
     }
 
-    g_PrintWithColor = arguments.colors;
     BOOL extraDirs = arguments.currentDir->next != NULL || arguments.recursiveList;
 
     while (arguments.currentDir != NULL)

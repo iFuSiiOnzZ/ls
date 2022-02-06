@@ -104,7 +104,7 @@ void GetPermissions(const char *path, asset_t *asset)
     CHECK_CLOSE_HANDLE(hImpersonatedToken);
 }
 
-BOOL GetOwnerAndDomain(const char *assetPath, asset_t *asset)
+BOOL GetOwnerAndDomain(const char *path, asset_t *asset)
 {
     PSID pSidOwner = NULL;
     PSECURITY_DESCRIPTOR pSD = NULL;
@@ -112,7 +112,7 @@ BOOL GetOwnerAndDomain(const char *assetPath, asset_t *asset)
     strcpy_s(asset->owner, OWNER_SIZE, "-");
     strcpy_s(asset->domain, DOMAIN_SIZE, "-");
 
-    HANDLE hFile = CreateFileA(assetPath, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
+    HANDLE hFile = CreateFileA(path, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
     if (hFile == INVALID_HANDLE_VALUE) { GetLastErrorAsString(); return FALSE; }
 
     DWORD dwRtnCode = GetSecurityInfo(hFile, SE_FILE_OBJECT, OWNER_SECURITY_INFORMATION, &pSidOwner, NULL, NULL, NULL, &pSD);
