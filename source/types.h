@@ -249,24 +249,25 @@ static const asset_metadata_t g_AssetMetaData[] =
     {168, 218, 220, "pictures",  u8"\uf74e"},
 
     // Other type of folders
-    {243, 114, 44, ".git",              u8"\ue702"},
-    {243, 114, 44, ".gitconfig",        u8"\ue702"},
-    {243, 114, 44, ".gitignore",        u8"\ue702"},
-    {243, 114, 44, ".gitattributes",    u8"\ue702"},
-    {249, 132, 74, ".config",           u8"\ue5fc"},
-    {255, 182,  0, "license.md",        u8"\ue60a"},
-    {255, 182,  0, "license",           u8"\ue60a"},
-    {255, 158,  0, "readme.md",         u8"\uf7fc"},
-    {255, 158,  0, "readme",            u8"\uf7fc"},
+    {243, 114,  44, ".git",             u8"\ue702"},
+    {243, 114,  44, ".gitconfig",       u8"\ue702"},
+    {243, 114,  44, ".gitignore",       u8"\ue702"},
+    {243, 114,  44, ".gitmodules",      u8"\ue702"},
+    {243, 114,  44, ".gitattributes",   u8"\ue702"},
+    {254, 197, 187, ".config",          u8"\ue5fc"},
+    {255, 255, 255, ".vscode",          u8"\ue70c"},
+    {255, 255, 255, ".vs",              u8"\ue70c"},
+    {255, 255, 255, ".atom",            u8"\ue764"},
+    {255, 255, 255, ".idea",            u8"\ue7b5"},
 
     // Windows executable and libraries
     {229, 107, 111, ".exe", u8"\ufb13"},
     {181, 101, 118, ".dll", u8"\uf1e1"},
     {249, 132,  74, ".sys", u8"\uf720"},
-    {180,  89, 122, ".bat", u8"\ufb32"},
-    {180,  89, 122, ".cmd", u8"\ufb32"},
-    {180,  89, 122, ".com", u8"\ufb32"},
-    {180,  89, 122, ".reg", u8"\ufb32"},
+    {229, 107, 111, ".bat", u8"\ufb32"},
+    {229, 107, 111, ".cmd", u8"\ufb32"},
+    {229, 107, 111, ".com", u8"\ufb32"},
+    {229, 107, 111, ".reg", u8"\ufb32"},
 
     // Compress files
     {200, 200, 250, ".7z",  u8"\uf410"},
@@ -284,8 +285,8 @@ static const asset_metadata_t g_AssetMetaData[] =
     {200, 200, 250, ".arc", u8"\uf410"},
 
     // Disk images
-    {255, 255, 255, ".iso", u8"\ufaed"},
-    {255, 255, 255, ".dmg", u8"\ufaed"},
+    {255, 255, 255, ".iso", u8"\ue271"},
+    {255, 255, 255, ".dmg", u8"\ue271"},
 
     // Images
     {255, 232, 124, ".jpg",  u8"\uf1c5"},
@@ -345,14 +346,21 @@ static const asset_metadata_t g_AssetMetaData[] =
     {  3, 131, 135, ".pptx", u8"\uf1c4"},
 
     // File formats
-    {144, 221, 240, ".editorconfig", u8"\ufa23"},
-    { 39, 125, 161, ".json",         u8"\ufb25"},
+    {144, 221, 240, ".editorconfig", u8"\ue615"},
+    { 39, 125, 161, ".json",         u8"\ue60b"},
     {249, 132,  74, ".xml",          u8"\uf72d"},
     {249, 132,  74, ".ini",          u8"\ue615"},
     {249, 132,  74, ".cfg",          u8"\ue615"},
-    {166, 117, 161, ".yml",          u8"\ue009"},
     {239, 217, 206, ".md",           u8"\uf853"},
-
+    {166, 117, 161, ".yml",          u8"\ue009"},
+    {166, 117, 161, ".yaml",         u8"\ue009"},
+    {255, 182,   0, "license.md",    u8"\ue60a"},
+    {255, 182,   0, "license",       u8"\ue60a"},
+    {255, 158,   0, "readme.md",     u8"\uf7fc"},
+    {255, 158,   0, "readme",        u8"\uf7fc"},
+    { 92, 109, 112, "jenkinsfile",   u8"\ue767"},
+    {  0, 180, 216, "dockerfile",    u8"\uf308"},
+    {255, 180, 216, "makefile",      u8"\uf489"},
     // Fonts
     {144, 190, 109, ".ttf",   u8"\uf031"},
     {144, 190, 109, ".otf",   u8"\uf031"},
@@ -361,13 +369,13 @@ static const asset_metadata_t g_AssetMetaData[] =
     {144, 190, 109, ".woff2", u8"\uf031"},
 
     // Programming
-    { 87, 117, 144, ".c",          u8"\ue61e" },
-    { 87, 117, 144, ".cpp",        u8"\ue61d" },
-    { 87, 117, 144, ".h",          u8"\ue61e" },
+    { 87, 117, 144, ".c",          u8"\ue61e"},
+    { 87, 117, 144, ".cpp",        u8"\ue61d"},
+    { 87, 117, 144, ".h",          u8"\ue61e"},
     { 87, 117, 144, ".hpp",        u8"\ue61d"},
     {255, 155,  84, ".asm",        u8"\ufb32"},
     {212, 106, 106, ".cs",         u8"\uf81a"},
-    {212, 106, 106, ".vba",        u8"\uf81a" },
+    {212, 106, 106, ".vba",        u8"\ufb32"},
     {180,  89, 122, ".sh",         u8"\ufb32"},
     {180,  89, 122, ".zsh",        u8"\ufb32"},
     {212, 154, 106, ".py",         u8"\ue73c"},
@@ -375,7 +383,8 @@ static const asset_metadata_t g_AssetMetaData[] =
     {255, 255, 255, ".rs",         u8"\ue7a8"},
     {102, 153, 153, ".lua",        u8"\ue620"},
     { 87, 117, 144, ".php",        u8"\ue73d"},
-    {255, 209, 170, ".java",       u8"\ue738"},
+    {255, 209, 170, ".jar",        u8"\ue256"},
+    {255, 209, 170, ".java",       u8"\ue256"},
     {136, 204, 136, ".css",        u8"\ue74a"},
     {136, 204, 136, ".htm",        u8"\ue60e"},
     {136, 204, 136, ".html",       u8"\ue60e"},
@@ -384,7 +393,7 @@ static const asset_metadata_t g_AssetMetaData[] =
     { 39, 125, 161, ".js",         u8"\ue74e"},
     { 39, 125, 161, ".javascript", u8"\ue74e"},
 
-    // Other formats
+    //  Binary  formats
     {249, 199, 79, ".bin",   u8"\uf471"},
     {249, 199, 79, ".log",   u8"\uf18d"},
     {249, 199, 79, ".dat",   u8"\uf1c0"},
