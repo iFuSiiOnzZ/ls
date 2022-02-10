@@ -261,6 +261,15 @@ static const asset_metadata_t g_AssetMetaData[] =
     {255, 255, 255, ".atom",            u8"\ue764"},                // 
     {255, 255, 255, ".idea",            u8"\ue7b5"},                // 
 
+    // File names
+    {255, 182,   0, "license.md",    u8"\ue60a"},                   // 
+    {255, 182,   0, "license",       u8"\ue60a"},                   // 
+    {255, 158,   0, "readme.md",     u8"\uf7fc"},                   // 
+    {255, 158,   0, "readme",        u8"\uf7fc"},                   // 
+    { 92, 109, 112, "jenkinsfile",   u8"\ue767"},                   // 
+    {  0, 180, 216, "dockerfile",    u8"\uf308"},                   // 
+    {255, 180, 216, "makefile",      u8"\uf489"},                   // 
+
     // Windows executable and libraries
     {229, 107, 111, ".exe", u8"\ufb13"},                            // ﬓ
     {181, 101, 118, ".dll", u8"\uf1e1"},                            // 
@@ -281,7 +290,6 @@ static const asset_metadata_t g_AssetMetaData[] =
     {200, 200, 250, ".zip", u8"\uf410"},                            // 
     {200, 200, 250, ".rar", u8"\uf410"},                            // 
     {200, 200, 250, ".tar", u8"\uf410"},                            // 
-    {200, 200, 250, ".apk", u8"\uf410"},                            // 
     {200, 200, 250, ".cab", u8"\uf410"},                            // 
     {200, 200, 250, ".ace", u8"\uf410"},                            // 
     {200, 200, 250, ".arc", u8"\uf410"},                            // 
@@ -350,20 +358,14 @@ static const asset_metadata_t g_AssetMetaData[] =
 
     // File formats
     {144, 221, 240, ".editorconfig", u8"\ue615"},                   // 
-    {249, 132,  74, ".cfg",          u8"\ue615"},                   // 
-    {249, 132,  74, ".ini",          u8"\ue615"},                   // 
+    {144, 221, 240, ".cfg",          u8"\ue615"},                   // 
+    {144, 221, 240, ".ini",          u8"\ue615"},                   // 
     { 39, 125, 161, ".json",         u8"\ue60b"},                   // 
     {249, 132,  74, ".xml",          u8"\uf72d"},                   // 
     {239, 217, 206, ".md",           u8"\uf853"},                   // 
     {166, 117, 161, ".yml",          u8"\ue009"},                   // 
     {166, 117, 161, ".yaml",         u8"\ue009"},                   // 
-    {255, 182,   0, "license.md",    u8"\ue60a"},                   // 
-    {255, 182,   0, "license",       u8"\ue60a"},                   // 
-    {255, 158,   0, "readme.md",     u8"\uf7fc"},                   // 
-    {255, 158,   0, "readme",        u8"\uf7fc"},                   // 
-    { 92, 109, 112, "jenkinsfile",   u8"\ue767"},                   // 
-    {  0, 180, 216, "dockerfile",    u8"\uf308"},                   // 
-    {255, 180, 216, "makefile",      u8"\uf489"},                   // 
+
     // Fonts
     {144, 190, 109, ".ttf",   u8"\uf031"},                          // 
     {144, 190, 109, ".otf",   u8"\uf031"},                          // 
