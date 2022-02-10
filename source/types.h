@@ -315,6 +315,7 @@ static const asset_metadata_t g_AssetMetaData[] =
     {255  , 232  , 124  ,                 ".ps"  ,               u8"\uf1c5"}  ,  // 
     {255  , 232  , 124  ,                ".pps"  ,               u8"\uf1c5"}  ,  // 
     {255  , 232  , 124  ,               ".ppsx"  ,               u8"\uf1c5"}  ,  // 
+    {255  , 232  , 124  ,               ".jfif"  ,               u8"\uf1c5"}  ,  // 
 
      // Videos
     {237  , 145  ,  33  ,                ".mp4"  ,               u8"\uf1c8"}  ,  // 
