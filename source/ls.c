@@ -398,9 +398,11 @@ static arguments_t ParseArguments(int argc, const char *argv[])
 }
 
 /**
- * @brief Prints to screen the assets found.
+ * @brief Prints to screen the assets found. This functions show the type of
+ * file, the user permissions, group, owner, date, etc...
  *
  * @param content       pointer to the directory containing the assets
+ * @param directoryName name of the listed directory
  * @param arguments     pointer to the parsed arguments structure
  */
 static void PrintAssetLongFormat(const directory_t *content, const char *directoryName, const arguments_t *arguments)
@@ -493,6 +495,7 @@ static void PrintAssetLongFormat(const directory_t *content, const char *directo
             }
         }
 
+        // Show where symlink is pointing
         if (content->data[i].link[0] != '\0')
         {
             printf_s(" -> ");
@@ -507,7 +510,8 @@ static void PrintAssetLongFormat(const directory_t *content, const char *directo
 }
 
 /**
- * @brief Prints to screen the assets found, the icon and the file name.
+ * @brief Prints to screen the assets found. This functions show only basic
+ * information as the icon and the name.
  *
  * @param content pointer to the directory containing the assets
  * @param arguments     pointer to the parsed arguments structure
