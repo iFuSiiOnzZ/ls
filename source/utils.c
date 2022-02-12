@@ -84,55 +84,6 @@ void AddDirectoryToList(arguments_t *arguments, const char *path)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-char *ltrim(char *s)
-{
-    if (!s || s[0] == '\0')
-    {
-        return s;
-    }
-
-    size_t len = strlen(s);
-    char *c = s;
-
-    while (*c && isspace(*c))
-    {
-        ++c, --len;
-    }
-
-    if (s != c)
-    {
-        memmove(s, c, len + 1);
-    }
-
-    return s;
-}
-
-char *rtrim(char *s)
-{
-    if (!s || s[0] == '\0')
-    {
-        return s;
-    }
-
-    size_t len = strlen(s);
-    char *c = s + len - 1;
-
-    while (c != s && isspace(*c))
-    {
-        --c, --len;
-    }
-
-    c[isspace(*c) ? 0 : 1] = '\0';
-    return s;
-}
-
-char *trim(char *s)
-{
-    return rtrim(ltrim(s));
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
 const char *FindLastDelimiter(const char *str, const char *delimiters)
 {
     if (str == NULL || delimiters == NULL) return NULL;
@@ -150,17 +101,6 @@ const char *FindLastDelimiter(const char *str, const char *delimiters)
     }
 
     return NULL;
-}
-
-BOOL StringEndsWith(const char *str, const char *suffix)
-{
-    if (!str || !suffix) return FALSE;
-
-    size_t lenstr = strlen(str);
-    size_t lensuffix = strlen(suffix);
-
-    if (lensuffix > lenstr) return 0;
-    return strncmp(str + lenstr - lensuffix, suffix, lensuffix) == 0;
 }
 
 const char *GetDirectoryFromPath(const char *path, char *buffer, size_t bufferSize)
@@ -213,9 +153,4 @@ const char *GetWorkingDirectory()
     static char workingDir[MAX_PATH] = { 0 };
     GetCurrentDirectoryA(MAX_PATH, workingDir);
     return workingDir;
-}
-
-BOOL IsDotPath(const char *name)
-{
-    return strcmp(name, ".") == 0 || strcmp(name, "..") == 0;
 }

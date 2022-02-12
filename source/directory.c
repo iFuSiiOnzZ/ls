@@ -16,6 +16,18 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
+ * @brief Given a path it says it is current path, '.',
+ * or parent path, '..'.
+ *
+ * @param path      relative path
+ * @return BOOL     TRUE if it is '.' or '..', FALSE otherwise
+ */
+static BOOL IsDotPath(const char *path)
+{
+    return strcmp(path, ".") == 0 || strcmp(path, "..") == 0;
+}
+
+/**
  * @brief Convert a FILETIME timestap to a human representation.
  * By default the creation time it will be used, is case of
  * sorting it will be used to sort timestap required.
