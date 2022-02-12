@@ -365,6 +365,8 @@ void PrintAssetShortFormat(const directory_t *content, const arguments_t *argume
 
 void ShowMetaData(const arguments_t *arguments)
 {
+    g_PrintWithColor = arguments->colors;
+
     for (size_t i = 0; i < ARRAY_SIZE(g_AssetMetaData); ++i)
     {
         const char fmt[] = "(%3d, %3d, %3d)  %s  %s\n";
