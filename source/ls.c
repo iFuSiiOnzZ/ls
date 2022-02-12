@@ -403,7 +403,7 @@ static arguments_t ParseArguments(int argc, const char *argv[])
  * @param content       pointer to the directory containing the assets
  * @param arguments     pointer to the parsed arguments structure
  */
-static void PrintAssetInformation(const directory_t *content, const char *directoryName, arguments_t *arguments)
+static void PrintAssetLongFormat(const directory_t *content, const char *directoryName, const arguments_t *arguments)
 {
     char currentPath[MAX_PATH] = { 0 };
     GetDirectoryFromPath(directoryName, currentPath, MAX_PATH);
@@ -422,13 +422,6 @@ static void PrintAssetInformation(const directory_t *content, const char *direct
 
     for (size_t i = 0; i < content->size; ++i)
     {
-        if (!arguments->showLongFormat)
-        {
-            text_color_t textColor = GetTextNameColor(&content->data[i]);
-            color_printf(textColor, "%s\n", content->data[i].name);
-            continue;
-        }
-
         // Content type
         text_color_t textColor = GRAY;
         color_printf(textColor, "%c", GetContentType(&content->data[i]));
@@ -458,7 +451,7 @@ static void PrintAssetInformation(const directory_t *content, const char *direct
         color_printf(textColor, "%*.*s  ", ownerLength, ownerLength, content->data[i].owner);
 
         // Creation date
-        textColor = BLUE;
+        textColor = CYAN;
         color_printf(textColor, "%s  ", content->data[i].date);
 
         // File name
@@ -509,6 +502,42 @@ static void PrintAssetInformation(const directory_t *content, const char *direct
         if (i < content->size - 1)
         {
             putchar('\n');
+        }
+    }
+}
+
+/**
+ * @brief Prints to screen the assets found, the icon and the file name.
+ *
+ * @param content pointer to the directory containing the assets
+ * @param arguments     pointer to the parsed arguments structure
+ */
+static void PrintAssetShortFormat(const directory_t *content, const arguments_t *arguments)
+{
+    for (size_t i = 0; i < content->size; ++i)
+    {
+        text_color_t textColor = GetTextNameColor(&content->data[i]);
+        const asset_metadata_t *assetMetadata = GetAssetMetadata(&content->data[i]);
+
+        if (arguments->showIcons)
+        {
+            if (arguments->virtualTerminal)
+            {
+                color_printf_vt(assetMetadata->r, assetMetadata->g, assetMetadata->b, "%s ", assetMetadata->icon);
+            }
+            else
+            {
+                color_printf(textColor, "%s ", assetMetadata->icon);
+            }
+        }
+
+        if (arguments->virtualTerminal)
+        {
+            color_printf_vt(assetMetadata->r, assetMetadata->g, assetMetadata->b, "%s\n", content->data[i].name);
+        }
+        else
+        {
+            color_printf(textColor, "%s\n", content->data[i].name);
         }
     }
 }
@@ -609,10 +638,18 @@ int main(int argc, char *argv[])
         SortDirectoryContent(directory, &arguments);
         if (extraDirs) printf_s("%s\n", dir->path);
 
-        PrintAssetInformation(directory, dir->path, &arguments);
-        if (arguments.currentDir->next != NULL) printf_s("\n\n");
+        if (arguments.showLongFormat)
+        {
+            PrintAssetLongFormat(directory, dir->path, &arguments);
+            if (arguments.currentDir->next != NULL) printf_s("\n\n");
+        }
+        else
+        {
+            PrintAssetShortFormat(directory, &arguments);
+            if (arguments.currentDir->next != NULL) printf_s("\n\n");
+        }
 
-        next_dir:
+    next_dir:
         arguments.currentDir = arguments.currentDir->next;
         CHECK_DELETE(directory);
         free(dir);
