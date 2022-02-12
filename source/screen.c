@@ -10,6 +10,24 @@
 static BOOL g_PrintWithColor = FALSE;
 
 /**
+ * @brief Check if string ends with a given suffix.
+ *
+ * @param str       string to check
+ * @param suffix    suffix to search into the string
+ * @return BOOL     TRUE if it ends with the suffix, FALSE otherwise
+ */
+static BOOL StringEndsWith(const char *str, const char *suffix)
+{
+    if (!str || !suffix) return FALSE;
+
+    size_t lenstr = strlen(str);
+    size_t lensuffix = strlen(suffix);
+
+    if (lensuffix > lenstr) return 0;
+    return strncmp(str + lenstr - lensuffix, suffix, lensuffix) == 0;
+}
+
+/**
  * @brief Prints text on the screen with a given color. If the global variable
  * 'g_PrintWithColor' is not set the text it will be printed using the default
  * console text color.
