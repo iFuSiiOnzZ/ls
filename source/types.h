@@ -245,7 +245,7 @@ static const asset_metadata_t g_AssetMetaData[] =
     {168  , 218  , 220  ,           "favorites"  ,               u8"\ufb9b"}  ,  // ﮛ
     {168  , 218  , 220  ,               "links"  ,               u8"\uf0c1"}  ,  // 
     {168  , 218  , 220  ,               "music"  ,               u8"\uf883"}  ,  // 
-    {168  , 218  , 220  ,              "videos"  ,               u8"\ufa66"}  ,  // 辶
+    {168  , 218  , 220  ,              "videos"  ,               u8"\uf03d"}  ,  // 
     {168  , 218  , 220  ,            "pictures"  ,               u8"\uf74e"}  ,  // 
     {200  , 226  , 200  ,             "android"  ,               u8"\ue70e"}  ,  // 
 
