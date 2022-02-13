@@ -10,6 +10,8 @@ set BUILD_TYPE=Release
 set CLEAN_BUILD=false
 set BUILD_PATH=%LOCAL_PATH%..
 
+set INSTALL_PATH=
+
 :arg-parse
 if not "%1"=="" (
     if "%1"=="--build-type" (
@@ -24,6 +26,11 @@ if not "%1"=="" (
 
     if "%1"=="--platform" (
         set PLATFORM=%2
+        shift
+    )
+
+    if "%1"=="--install" (
+        set INSTALL_PATH=%2
         shift
     )
 
@@ -76,7 +83,7 @@ REM
 REM Set compiler flags in function of the build type
 REM
 set CompilerFlags= /nologo /MP /W4 /Oi /GR /wd4200 /Fo"%OBJ_PATH%\\" /Fe"%BIN_PATH%\\ls"
-set LinkerFlags= /NOLOGO /SUBSYSTEM:CONSOLE /INCREMENTAL:NO
+set LinkerFlags= /NOLOGO /SUBSYSTEM:CONSOLE /INCREMENTAL:NO User32.lib
 
 if %BUILD_TYPE% == Debug (
     set CompilerFlags= /Od /MTd /Z7 /GS /Gs /RTC1 !CompilerFlags! /Fd"%BIN_PATH%\\"
@@ -99,17 +106,27 @@ cl %LIST% %CompilerFlags% /link %LinkerFlags%
 if %ERRORLEVEL% neq 0 (goto bad_exit)
 echo Binary output (%BUILD_TYPE%): "%BIN_PATH%\ls"
 
+REM
+REM Copy 'ls.exe' to a given path
+REM
+if not "%INSTALL_PATH%" == "" (
+    echo.
+    echo copy /y "%BIN_PATH%\ls.exe" "%INSTALL_PATH%"
+    copy /y "%BIN_PATH%\ls.exe" "%INSTALL_PATH%"
+)
+
 goto good_exit
 REM ============================================================================
 REM -- Messages and Errors -----------------------------------------------------
 REM ============================================================================
 
 :help
-    echo build.bat [--build-type=Release^|Debug] [--platform=x64^|x86] [--build-path=<output directory>]
+    echo build.bat [--build-type=Release^|Debug] [--platform=x64^|x86] [--build-path=<output directory>] [--install=<directory>]
     echo By default: --build-type=Release --platform=x64 --build-path=<project root>
     echo    --build-type    type of build, release or debug
     echo    --build-path    directory where binaries are generated
     echo    --platform      x64 for 64 bits or x86 for 32 bits
+    echo    --install       copy the program to the given directory
     echo    --clean         remove the previous build data
     echo    --help, -h      show help
     goto good_exit
