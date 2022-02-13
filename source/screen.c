@@ -1,10 +1,15 @@
 #include "screen.h"
 #include "utils.h"
+#include "win32.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 // Compute the size of compile time array
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+
+// Check if pointer is not NULL, free it and assign NULL to it
+#define CHECK_DELETE(x) do { if(x) { free(x); x = NULL; } } while(0)
 
 // Colorize the output or not
 static BOOL g_PrintWithColor = FALSE;
@@ -331,12 +336,49 @@ void PrintAssetLongFormat(const directory_t *content, const char *directoryName,
     }
 }
 
+typedef struct table_info_t { const char *name; size_t size; } table_info_t;
+static int t_cmp(const table_info_t *a, const table_info_t *b) { return (int)b->size - (int)a->size; }
+
 void PrintAssetShortFormat(const directory_t *content, const arguments_t *arguments)
 {
     g_PrintWithColor = arguments->colors;
+    int width = 0, height = 0, cols = 1, stride = 0;
+
+    size_t sz = sizeof(table_info_t) * content->size;
+    table_info_t *table = (table_info_t *) malloc(sz);
 
     for (size_t i = 0; i < content->size; ++i)
     {
+        table[i].name = content->data[i].name;
+        table[i].size = strlen(table[i].name);
+    }
+
+    GetScreenBufferSize(&width, &height);
+    qsort(table, content->size, sizeof(table_info_t), t_cmp);
+
+    for (int i = 1, s = 0; i < (int)content->size; ++i)
+    {
+        s += (int)(table[i + 0].size + table[i - 1].size);
+        if (s < width) { cols++; } else { break; }
+    }
+
+    CHECK_DELETE(table);
+    stride = width / cols;
+
+    for (size_t i = 0, c = 0; i < content->size; ++i, ++c)
+    {
+        int x = 0, y = 0;
+        GetCursorPosition(&x, &y);
+
+        if (c >= cols)
+        {
+            c = 0;
+            ++y;
+        }
+
+        x = (int)(c * stride);
+        SetCursorPosition(x, y);
+
         text_color_t textColor = GetTextNameColor(&content->data[i]);
         const asset_metadata_t *assetMetadata = GetAssetMetadata(&content->data[i]);
 
@@ -354,11 +396,11 @@ void PrintAssetShortFormat(const directory_t *content, const arguments_t *argume
 
         if (arguments->virtualTerminal)
         {
-            color_printf_vt(assetMetadata->r, assetMetadata->g, assetMetadata->b, "%s\n", content->data[i].name);
+            color_printf_vt(assetMetadata->r, assetMetadata->g, assetMetadata->b, "%s", content->data[i].name);
         }
         else
         {
-            color_printf(textColor, "%s\n", content->data[i].name);
+            color_printf(textColor, "%s", content->data[i].name);
         }
     }
 }
