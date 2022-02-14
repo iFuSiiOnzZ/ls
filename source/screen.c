@@ -14,6 +14,23 @@
 // Colorize the output or not
 static BOOL g_PrintWithColor = FALSE;
 
+
+///////////////////////////////////////////////////////////////////////////////
+#define NUM_COLS 64
+
+typedef struct col_t
+{
+    size_t size;
+} col_t;
+
+typedef struct row_t
+{
+    size_t size;
+    col_t cols[NUM_COLS];
+} row_t;
+
+///////////////////////////////////////////////////////////////////////////////
+
 /**
  * @brief Check if string ends with a given suffix.
  *
@@ -70,6 +87,7 @@ static void color_printf(text_color_t textColor, const char *fmt, ...)
     va_end(args);
 
     SetConsoleTextAttribute(hConsole, wOldColorAttrs);
+    return;
 }
 
 /**
@@ -108,6 +126,8 @@ static void color_printf_vt(int r, int g, int b, const char *fmt, ...)
 
     vprintf_s(print_fmt, args);
     va_end(args);
+
+    return;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -228,6 +248,70 @@ static const asset_metadata_t *GetAssetMetadata(const asset_t *data)
     return &oth;
 }
 
+
+/**
+ * @brief Get the number of columns to display the content as grid.
+ *
+ * @param content   pointer to the directory containing the assets
+ * @return row_t    number of columns
+ */
+static row_t GetNumberOfColumns(const directory_t *content, size_t padding)
+{
+    int width = 0, height = 0, cols = NUM_COLS;
+    GetScreenBufferSize(&width, &height);
+
+    for (size_t i = 0, s = 0; i < content->size; ++i)
+    {
+        const asset_metadata_t *m = GetAssetMetadata(&content->data[i]);
+        s = strlen(content->data[i].name) + strlen(m->icon) + padding;
+
+        for (size_t j = i + 1, c = 1; j < content->size; ++j, ++c)
+        {
+            m = GetAssetMetadata(&content->data[j]);
+            s += strlen(content->data[j].name);
+
+            s += strlen(m->icon);
+            s += padding;
+
+            if (s >= width)
+            {
+                cols = c < cols ? (int)c : cols;
+                break;
+            }
+        }
+    }
+
+    row_t ret = { 0 }; cols = cols > NUM_COLS ? NUM_COLS : cols;
+    ret.size = cols;
+
+    compute_column_size:
+    memset(ret.cols, 0, sizeof(col_t) * NUM_COLS);
+
+    for (size_t i = 0; i < content->size; ++i)
+    {
+        size_t ri = i % ret.size;
+        const asset_metadata_t *m = GetAssetMetadata(&content->data[i]);
+        size_t size = strlen(content->data[i].name) + strlen(m->icon) + padding;
+
+        col_t *c = &ret.cols[ri];
+        c->size = (size > c->size) ? size : c->size;
+    }
+
+    size_t colSize = 0;
+    for (size_t i = 0; i < ret.size; ++i)
+    {
+        colSize += ret.cols[i].size;
+    }
+
+    if (colSize >= width && ret.size > 1)
+    {
+        --ret.size;
+        goto compute_column_size;
+    }
+
+    return ret;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 void PrintAssetLongFormat(const directory_t *content, const char *directoryName, const arguments_t *arguments)
@@ -338,90 +422,48 @@ void PrintAssetLongFormat(const directory_t *content, const char *directoryName,
 
 void PrintAssetShortFormat(const directory_t *content, const arguments_t *arguments)
 {
+    static const size_t extraspace = 3;
     g_PrintWithColor = arguments->colors;
-    int width = 0, height = 0, cols = 999;
-
-    const int extraspace = 5;
-    GetScreenBufferSize(&width, &height);
-
-    for (size_t i = 0, s = 0; i < content->size; ++i)
-    {
-        const asset_metadata_t *m = GetAssetMetadata(&content->data[i]);
-        s = strlen(content->data[i].name) + strlen(m->icon);
-
-        for (size_t j = i + 1, c = 1; j < content->size; ++j, ++c)
-        {
-            m = GetAssetMetadata(&content->data[j]);
-            s += strlen(content->data[j].name);
-
-            s += strlen(m->icon);
-            s += extraspace;
-
-            if (s >= width)
-            {
-                cols = c < cols ? (int)c : cols;
-                break;
-            }
-        }
-    }
-
-    cols = (cols < 999) ? cols : (int) content->size;
-    typedef struct table_row_t { size_t size, rowSize; const asset_t *assets[1024]; } table_row_t;
-
-    table_row_t *table = (table_row_t *)malloc(sizeof(table_row_t) * cols);
-    memset(table, 0, sizeof(table_row_t) * cols);
+    row_t row = GetNumberOfColumns(content, extraspace);
 
     for (size_t i = 0; i < content->size; ++i)
     {
-        size_t ri = i % cols;
-        size_t sl = strlen(content->data[i].name) + extraspace;
+        size_t ri = i % row.size;
+        if (i > 0 && ri == 0) putchar('\n');
 
-        table_row_t *r = &table[ri];
-        r->assets[r->size++] = &content->data[i];
-        r->rowSize = (r->rowSize < sl) ? sl : r->rowSize;
-    }
+        text_color_t textColor = GetTextNameColor(&content->data[i]);
+        const asset_metadata_t *m = GetAssetMetadata(&content->data[i]);
 
-    int x = 0, endY = 0, startX = 0, startY = 0;
-    GetCursorPosition(&x, &startY);
-
-    for (size_t i = 0; i < cols; ++i)
-    {
-        if (i > 0) startX += (int)table[i - 1].rowSize;
-        int y = startY;
-
-        for (size_t j = 0; j < table[i].size; ++j)
+        if (arguments->showIcons)
         {
-            SetCursorPosition(startX, y++);
-            text_color_t textColor = GetTextNameColor(table[i].assets[j]);
-            const asset_metadata_t *assetMetadata = GetAssetMetadata(table[i].assets[j]);
-
-            if (arguments->showIcons)
-            {
-                if (arguments->virtualTerminal)
-                {
-                    color_printf_vt(assetMetadata->r, assetMetadata->g, assetMetadata->b, "%s ", assetMetadata->icon);
-                }
-                else
-                {
-                    color_printf(textColor, "%s ", assetMetadata->icon);
-                }
-            }
-
             if (arguments->virtualTerminal)
             {
-                color_printf_vt(assetMetadata->r, assetMetadata->g, assetMetadata->b, "%s", table[i].assets[j]->name);
+                color_printf_vt(m->r, m->g, m->b, "%s ", m->icon);
             }
             else
             {
-                color_printf(textColor, "%s", table[i].assets[j]->name);
+                color_printf(textColor, "%s ", m->icon);
             }
         }
 
-        endY = (y > endY) ? y : endY;
-    }
+        if (arguments->virtualTerminal)
+        {
+            color_printf_vt(m->r, m->g, m->b, "%s", content->data[i].name);
+        }
+        else
+        {
+            color_printf(textColor, "%s", content->data[i].name);
+        }
 
-    SetCursorPosition(0, endY - 1);
-    CHECK_DELETE(table);
+        const col_t *c = &row.cols[ri];
+        int w = (int)(strlen(m->icon) + strlen(content->data[i].name) + 1);
+
+        if (w < c->size && row.size > 1)
+        {
+            int padLen = (int)(c->size - w);
+            printf_s("%*.*s", padLen, padLen, " ");
+        }
+    }
 }
 
 void ShowMetaData(const arguments_t *arguments)
