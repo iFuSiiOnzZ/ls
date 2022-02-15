@@ -11,6 +11,15 @@
 // Check if pointer is not NULL, free it and assign NULL to it
 #define CHECK_DELETE(x) do { if(x) { free(x); x = NULL; } } while(0)
 
+// Maximum of 2 values
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
+
+// Minimum of 2 values
+#define MAX(x, y) ((x) > (y) ? (x) : (y))
+
+// Clamp a value between a low and a high
+#define CLAMP(v, l, h) MIN(h, MAX(l, v))
+
 // Colorize the output or not
 static BOOL g_PrintWithColor = FALSE;
 
@@ -281,8 +290,8 @@ static row_t GetNumberOfColumns(const directory_t *content, size_t padding)
         }
     }
 
-    row_t ret = { 0 }; cols = cols > NUM_COLS ? NUM_COLS : cols;
-    ret.size = cols;
+    row_t ret = { 0 };
+    ret.size = CLAMP(cols, 1,  NUM_COLS);
 
     compute_column_size:
     memset(ret.cols, 0, sizeof(col_t) * NUM_COLS);
