@@ -229,7 +229,7 @@ typedef struct asset_metadata_t
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static const asset_metadata_t g_AssetMetaData[] =
+static const asset_metadata_t g_AssetFullNameMetaData[] =
 {
     // System predefined directory
     {230  ,  57  ,  70  ,             "windows"  ,               u8"\ue70f"}  ,  // 
@@ -262,19 +262,31 @@ static const asset_metadata_t g_AssetMetaData[] =
     {255  , 255  , 255  ,               ".idea"  ,               u8"\ue7b5"}  ,  // 
 
      // File names
-    {255  , 182  ,   0  ,          "license.md"  ,               u8"\ue60a"}  ,  // 
-    {255  , 182  ,   0  ,             "license"  ,               u8"\ue60a"}  ,  // 
-    {255  , 158  ,   0  ,           "readme.md"  ,               u8"\uf7fc"}  ,  // 
-    {255  , 158  ,   0  ,              "readme"  ,               u8"\uf7fc"}  ,  // 
+    {255 ,  182  ,   0  ,          "license.md"  ,               u8"\ue60a"}  ,  // 
+    {255 ,  182  ,   0  ,             "license"  ,               u8"\ue60a"}  ,  // 
+    {255 ,  170  ,   0  ,           "readme.md"  ,               u8"\uf7fc"}  ,  // 
+    {255 ,  170  ,   0  ,              "readme"  ,               u8"\uf7fc"}  ,  // 
+    {255  , 158  ,   0  ,        "contributors"  ,               u8"\uf0c0"}  ,  // 
+    {255  , 158  ,   0  ,     "contributors.md"  ,               u8"\uf0c0"}  ,  // 
+    {255  , 145  ,   0  ,            "manifest"  ,               u8"\ue612"}  ,  // 
+    {255  , 145  ,   0  ,         "manifest.md"  ,               u8"\ue612"}  ,  // 
+    {255  , 133  ,   0  ,             "version"  ,               u8"\uf454"}  ,  // 
+    {255  , 133  ,   0  ,          "version.md"  ,               u8"\uf454"}  ,  // 
+    {255  , 121  ,   0  ,           "changelog"  ,               u8"\uf64f"}  ,  // 
+    {255  , 121  ,   0  ,        "changelog.md"  ,               u8"\uf64f"}  ,  // 
     {122  , 139  , 142  ,         "jenkinsfile"  ,               u8"\ue767"}  ,  // 
     {  0  , 180  , 216  ,          "dockerfile"  ,               u8"\uf308"}  ,  // 
-    {255  , 180  , 216  ,            "makefile"  ,               u8"\uf489"}  ,  // 
+    {255  , 180  , 216  ,            "makefile"  ,               u8"\uf425"}  ,  // 
+    {255  , 180  , 216  ,      "cmakelists.txt"  ,               u8"\uf425"}  ,  // 
+};
 
+static const asset_metadata_t g_AssetExtensionMetaData[] =
+{
     // Windows executable and libraries
     {229  , 107  , 111  ,                ".exe"  ,               u8"\ufb13"}  ,  // ﬓ
     {181  , 101  , 118  ,                ".dll"  ,               u8"\uf1e1"}  ,  // 
     {249  , 132  ,  74  ,                ".sys"  ,               u8"\uf720"}  ,  // 
-    {229  , 107  , 111  ,                ".bat"  ,               u8"\ue629"}  ,  // 
+    {229  , 107  , 111  ,                ".bat"  ,               u8"\uf68c"}  ,  // 
     {229  , 107  , 111  ,                ".cmd"  ,               u8"\ue629"}  ,  // 
     {229  , 107  , 111  ,                ".com"  ,               u8"\ue629"}  ,  // 
     {229  , 107  , 111  ,                ".reg"  ,               u8"\ue629"}  ,  // 
@@ -379,13 +391,15 @@ static const asset_metadata_t g_AssetMetaData[] =
     // Programming
     {127  , 147  , 184  ,                  ".c"  ,               u8"\ue61e"}  ,  // 
     {127  , 147  , 184  ,                  ".h"  ,               u8"\ue61e"}  ,  // 
+    {127  , 147  , 184  ,                 ".cc"  ,               u8"\ue61d"}  ,  // 
     {127  , 147  , 184  ,                ".cpp"  ,               u8"\ue61d"}  ,  // 
+    {127  , 147  , 184  ,                ".inl"  ,               u8"\ue61d"}  ,  // 
     {127  , 147  , 184  ,                ".hpp"  ,               u8"\ue61d"}  ,  // 
     {255  , 155  ,  84  ,                ".asm"  ,               u8"\ufb32"}  ,  // גּ
     {212  , 106  , 106  ,                 ".cs"  ,               u8"\uf81a"}  ,  // 
     {212  , 106  , 106  ,                ".vba"  ,               u8"\ufb32"}  ,  // גּ
-    {180  ,  89  , 122  ,                 ".sh"  ,               u8"\ufb32"}  ,  // גּ
-    {180  ,  89  , 122  ,                ".zsh"  ,               u8"\ufb32"}  ,  // גּ
+    {180  ,  89  , 122  ,                 ".sh"  ,               u8"\uf68c"}  ,  // 
+    {180  ,  89  , 122  ,                ".zsh"  ,               u8"\uf68c"}  ,  // 
     {212  , 154  , 106  ,                 ".py"  ,               u8"\ue73c"}  ,  // 
     {255  , 255  , 255  ,                 ".go"  ,               u8"\ue626"}  ,  // 
     {255  , 255  , 255  ,                 ".rs"  ,               u8"\ue7a8"}  ,  // 
@@ -393,6 +407,7 @@ static const asset_metadata_t g_AssetMetaData[] =
     {127  , 147  , 184  ,                ".php"  ,               u8"\ue73d"}  ,  // 
     {255  , 209  , 170  ,                ".jar"  ,               u8"\ue256"}  ,  // 
     {255  , 209  , 170  ,               ".java"  ,               u8"\ue256"}  ,  // 
+    {255  , 209  , 170  ,             ".groovy"  ,               u8"\ue775"}  ,  // 
     {136  , 204  , 136  ,                ".css"  ,               u8"\ue74a"}  ,  // 
     {136  , 204  , 136  ,                ".htm"  ,               u8"\ue60e"}  ,  // 
     {136  , 204  , 136  ,               ".html"  ,               u8"\ue60e"}  ,  // 
@@ -407,7 +422,21 @@ static const asset_metadata_t g_AssetMetaData[] =
     {249  , 199  ,  79  ,               ".msql"  ,               u8"\uf1c0"}  ,  // 
     {249  , 199  ,  79  ,              ".mysql"  ,               u8"\uf1c0"}  ,  // 
 
+    // SSL files
+    { 59  , 145  , 181  ,                ".key"  ,               u8"\uf805"}  ,  // 
+    { 59  , 145  , 181  ,                ".pem"  ,               u8"\uf805"}  ,  // 
+    { 59  , 145  , 181  ,                ".crt"  ,               u8"\uf0a3"}  ,  // 
+
+    // Build/Solution/Project files
+    {255  , 255  , 255  ,               ".make"  ,               u8"\uf425"}  ,  // 
+    {255  , 255  , 255  ,              ".cmake"  ,               u8"\uf425"}  ,  // 
+    {254  , 228  ,  64  ,                ".sln"  ,               u8"\ue70c"}  ,  // 
+    {175  , 123  , 249  ,             ".vcproj"  ,               u8"\ue70c"}  ,  // 
+    {175  , 123  , 249  ,            ".vcxproj"  ,               u8"\ue70c"}  ,  // 
+    {241  ,  91  , 181  ,            ".filters"  ,               u8"\uf0b0"}  ,  // 
+
     // Other type of files
+    {249  , 199  ,  79  ,                 ".in"  ,               u8"\ufd40"}  ,  // ﵀
     {249  , 199  ,  79  ,                ".bin"  ,               u8"\uf471"}  ,  // 
     {249  , 199  ,  79  ,                ".dat"  ,               u8"\uf471"}  ,  // 
     {249  , 199  ,  79  ,                ".bak"  ,               u8"\ufb6f"}  ,  // ﭯ

@@ -3,7 +3,7 @@
 #include "win32.h"
 
 #include <stdio.h>
-#include <stdlib.h>
+#include <string.h>
 
 // Compute the size of compile time array
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
@@ -223,11 +223,19 @@ static const asset_metadata_t *GetAssetMetadata(const asset_t *data)
         name[i] = (char)tolower(name[i]);
     }
 
-    for (size_t i = 0; i < ARRAY_SIZE(g_AssetMetaData); ++i)
+    for (size_t i = 0; i < ARRAY_SIZE(g_AssetFullNameMetaData); ++i)
     {
-        if (StringEndsWith(name, g_AssetMetaData[i].ext))
+        if (strcmp(name, g_AssetFullNameMetaData[i].ext) == 0)
         {
-            return &g_AssetMetaData[i];
+            return &g_AssetFullNameMetaData[i];
+        }
+    }
+
+    for (size_t i = 0; i < ARRAY_SIZE(g_AssetExtensionMetaData); ++i)
+    {
+        if (StringEndsWith(name, g_AssetExtensionMetaData[i].ext))
+        {
+            return &g_AssetExtensionMetaData[i];
         }
     }
 
@@ -479,10 +487,25 @@ void ShowMetaData(const arguments_t *arguments)
 {
     g_PrintWithColor = arguments->colors;
 
-    for (size_t i = 0; i < ARRAY_SIZE(g_AssetMetaData); ++i)
+    for (size_t i = 0; i < ARRAY_SIZE(g_AssetFullNameMetaData); ++i)
     {
         const char fmt[] = "(%3d, %3d, %3d)  %s  %s\n";
-        const asset_metadata_t *m = &g_AssetMetaData[i];
+        const asset_metadata_t *m = &g_AssetFullNameMetaData[i];
+
+        if (arguments->virtualTerminal)
+        {
+            color_printf_vt(m->r, m->g, m->b, fmt, m->r, m->g, m->b, m->icon, m->ext);
+        }
+        else
+        {
+            printf_s(fmt, m->r, m->g, m->b, m->icon, m->ext);
+        }
+    }
+
+    for (size_t i = 0; i < ARRAY_SIZE(g_AssetExtensionMetaData); ++i)
+    {
+        const char fmt[] = "(%3d, %3d, %3d)  %s  %s\n";
+        const asset_metadata_t *m = &g_AssetExtensionMetaData[i];
 
         if (arguments->virtualTerminal)
         {
