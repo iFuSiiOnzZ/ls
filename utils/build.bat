@@ -121,8 +121,8 @@ REM -- Messages and Errors -----------------------------------------------------
 REM ============================================================================
 
 :help
-    echo build.bat [--build-type=Release^|Debug] [--platform=x64^|x86] [--build-path=<output directory>] [--install=<directory>]
-    echo By default: --build-type=Release --platform=x64 --build-path=<project root>
+    echo build.bat [--build-type=Release^|Debug] [--platform=x64^|x86] [--build-path=^<output directory^>] [--install=^<directory^>]
+    echo By default: --build-type=Release --platform=x64 --build-path=^<project root^>
     echo    --build-type    type of build, release or debug
     echo    --build-path    directory where binaries are generated
     echo    --platform      x64 for 64 bits or x86 for 32 bits
@@ -149,4 +149,4 @@ REM ============================================================================
 
 :bad_exit
     endlocal
-    exit /b %ERRORLEVEL%
+    exit /b 1
