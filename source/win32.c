@@ -207,3 +207,40 @@ BOOL DisableVirtualTerminal()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+BOOL GetScreenBufferSize(int *width, int *height)
+{
+    CONSOLE_SCREEN_BUFFER_INFO csbi = { 0 };
+    int ret = GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+
+    if (ret)
+    {
+        *width  = csbi.srWindow.Right  - csbi.srWindow.Left + 1;
+        *height = csbi.srWindow.Bottom - csbi.srWindow.Top  + 1;
+    }
+
+    return ret;
+}
+
+BOOL GetCursorPosition(int *x, int *y)
+{
+    CONSOLE_SCREEN_BUFFER_INFO cbsi;
+    int ret = GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cbsi);
+
+    if (ret)
+    {
+        *x = cbsi.dwCursorPosition.X;
+        *y = cbsi.dwCursorPosition.Y;
+    }
+
+    return ret;
+
+}
+
+BOOL SetCursorPosition(int x, int y)
+{
+    COORD pos = { (SHORT)x, (SHORT)y };
+    return SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+}
+
+///////////////////////////////////////////////////////////////////////////////

@@ -77,3 +77,30 @@ BOOL EnableVirtualTerminal();
  * https://docs.microsoft.com/es-es/windows/console/console-virtual-terminal-sequences
  */
 BOOL DisableVirtualTerminal();
+
+/**
+ * @brief Get terminal screen buffer size.
+ *
+ * @param width     valid pointer where the width is stored
+ * @param height    valid pointer where the height is stored
+ * @return BOOL     TRUE if it can be retrieved, FALSE otherwise
+ */
+BOOL GetScreenBufferSize(int *width, int *height);
+
+/**
+ * @brief Get the terminal cursor position.
+ *
+ * @param x     valid pointer where 'x' coordina es stored
+ * @param y     valid pointer where 'y' coordina es stored
+ * @return BOOL TRUE if it can be retrieved, FALSE otherwise
+ */
+BOOL GetCursorPosition(int *x, int *y);
+
+/**
+ * @brief Set the terminal cursor position.
+ *
+ * @param x     cursor 'x' coordinate
+ * @param y     cursor 'y' coordinate
+ * @return BOOL TRUE if it can be set, FALSE otherwise
+ */
+BOOL SetCursorPosition(int x, int y);

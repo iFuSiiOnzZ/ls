@@ -1,13 +1,44 @@
 #include "screen.h"
 #include "utils.h"
+#include "win32.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 // Compute the size of compile time array
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
+// Check if pointer is not NULL, free it and assign NULL to it
+#define CHECK_DELETE(x) do { if(x) { free(x); x = NULL; } } while(0)
+
+// Maximum of 2 values
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
+
+// Minimum of 2 values
+#define MAX(x, y) ((x) > (y) ? (x) : (y))
+
+// Clamp a value between a low and a high
+#define CLAMP(v, l, h) MIN(h, MAX(l, v))
+
 // Colorize the output or not
 static BOOL g_PrintWithColor = FALSE;
+
+
+///////////////////////////////////////////////////////////////////////////////
+#define NUM_COLS 64
+
+typedef struct col_t
+{
+    size_t size;
+} col_t;
+
+typedef struct row_t
+{
+    size_t size;
+    col_t cols[NUM_COLS];
+} row_t;
+
+///////////////////////////////////////////////////////////////////////////////
 
 /**
  * @brief Check if string ends with a given suffix.
@@ -65,6 +96,7 @@ static void color_printf(text_color_t textColor, const char *fmt, ...)
     va_end(args);
 
     SetConsoleTextAttribute(hConsole, wOldColorAttrs);
+    return;
 }
 
 /**
@@ -103,6 +135,8 @@ static void color_printf_vt(int r, int g, int b, const char *fmt, ...)
 
     vprintf_s(print_fmt, args);
     va_end(args);
+
+    return;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -223,6 +257,70 @@ static const asset_metadata_t *GetAssetMetadata(const asset_t *data)
     return &oth;
 }
 
+
+/**
+ * @brief Get the number of columns to display the content as grid.
+ *
+ * @param content   pointer to the directory containing the assets
+ * @return row_t    number of columns
+ */
+static row_t GetNumberOfColumns(const directory_t *content, size_t padding)
+{
+    int width = 0, height = 0, cols = NUM_COLS;
+    GetScreenBufferSize(&width, &height);
+
+    for (size_t i = 0, s = 0; i < content->size; ++i)
+    {
+        const asset_metadata_t *m = GetAssetMetadata(&content->data[i]);
+        s = strlen(content->data[i].name) + strlen(m->icon) + padding;
+
+        for (size_t j = i + 1, c = 1; j < content->size; ++j, ++c)
+        {
+            m = GetAssetMetadata(&content->data[j]);
+            s += strlen(content->data[j].name);
+
+            s += strlen(m->icon);
+            s += padding;
+
+            if (s >= width)
+            {
+                cols = c < cols ? (int)c : cols;
+                break;
+            }
+        }
+    }
+
+    row_t ret = { 0 };
+    ret.size = CLAMP(cols, 1,  NUM_COLS);
+
+    compute_column_size:
+    memset(ret.cols, 0, sizeof(col_t) * NUM_COLS);
+
+    for (size_t i = 0; i < content->size; ++i)
+    {
+        size_t ri = i % ret.size;
+        const asset_metadata_t *m = GetAssetMetadata(&content->data[i]);
+        size_t size = strlen(content->data[i].name) + strlen(m->icon) + padding;
+
+        col_t *c = &ret.cols[ri];
+        c->size = (size > c->size) ? size : c->size;
+    }
+
+    size_t colSize = 0;
+    for (size_t i = 0; i < ret.size; ++i)
+    {
+        colSize += ret.cols[i].size;
+    }
+
+    if (colSize >= width && ret.size > 1)
+    {
+        --ret.size;
+        goto compute_column_size;
+    }
+
+    return ret;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 void PrintAssetLongFormat(const directory_t *content, const char *directoryName, const arguments_t *arguments)
@@ -333,38 +431,54 @@ void PrintAssetLongFormat(const directory_t *content, const char *directoryName,
 
 void PrintAssetShortFormat(const directory_t *content, const arguments_t *arguments)
 {
+    static const size_t extraspace = 3;
     g_PrintWithColor = arguments->colors;
+    row_t row = GetNumberOfColumns(content, extraspace);
 
     for (size_t i = 0; i < content->size; ++i)
     {
+        size_t ri = i % row.size;
+        if (i > 0 && ri == 0) putchar('\n');
+
         text_color_t textColor = GetTextNameColor(&content->data[i]);
-        const asset_metadata_t *assetMetadata = GetAssetMetadata(&content->data[i]);
+        const asset_metadata_t *m = GetAssetMetadata(&content->data[i]);
 
         if (arguments->showIcons)
         {
             if (arguments->virtualTerminal)
             {
-                color_printf_vt(assetMetadata->r, assetMetadata->g, assetMetadata->b, "%s ", assetMetadata->icon);
+                color_printf_vt(m->r, m->g, m->b, "%s ", m->icon);
             }
             else
             {
-                color_printf(textColor, "%s ", assetMetadata->icon);
+                color_printf(textColor, "%s ", m->icon);
             }
         }
 
         if (arguments->virtualTerminal)
         {
-            color_printf_vt(assetMetadata->r, assetMetadata->g, assetMetadata->b, "%s\n", content->data[i].name);
+            color_printf_vt(m->r, m->g, m->b, "%s", content->data[i].name);
         }
         else
         {
-            color_printf(textColor, "%s\n", content->data[i].name);
+            color_printf(textColor, "%s", content->data[i].name);
+        }
+
+        const col_t *c = &row.cols[ri];
+        int w = (int)(strlen(m->icon) + strlen(content->data[i].name) + 1);
+
+        if (w < c->size && row.size > 1)
+        {
+            int padLen = (int)(c->size - w);
+            printf_s("%*.*s", padLen, padLen, " ");
         }
     }
 }
 
 void ShowMetaData(const arguments_t *arguments)
 {
+    g_PrintWithColor = arguments->colors;
+
     for (size_t i = 0; i < ARRAY_SIZE(g_AssetMetaData); ++i)
     {
         const char fmt[] = "(%3d, %3d, %3d)  %s  %s\n";
