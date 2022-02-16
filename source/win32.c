@@ -10,9 +10,6 @@
 // Check if handle is not NULL, close it and assign NULL to it
 #define CHECK_CLOSE_HANDLE(x) do { if(x) { CloseHandle(x); x = NULL; } } while(0)
 
-// Check if pointer is not NULL, free it and assign NULL to it
-#define CHECK_DELETE(x) do { if(x) { free(x); x = NULL; } } while(0)
-
 ///////////////////////////////////////////////////////////////////////////////
 
 const char *GetLastErrorAsString()
@@ -204,6 +201,43 @@ BOOL DisableVirtualTerminal()
     consoleMode |= ~DISABLE_NEWLINE_AUTO_RETURN;
 
     return SetConsoleMode(handleOut, consoleMode);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+BOOL GetScreenBufferSize(int *width, int *height)
+{
+    CONSOLE_SCREEN_BUFFER_INFO csbi = { 0 };
+    int ret = GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+
+    if (ret)
+    {
+        *width  = csbi.srWindow.Right  - csbi.srWindow.Left + 1;
+        *height = csbi.srWindow.Bottom - csbi.srWindow.Top  + 1;
+    }
+
+    return ret;
+}
+
+BOOL GetCursorPosition(int *x, int *y)
+{
+    CONSOLE_SCREEN_BUFFER_INFO cbsi;
+    int ret = GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cbsi);
+
+    if (ret)
+    {
+        *x = cbsi.dwCursorPosition.X;
+        *y = cbsi.dwCursorPosition.Y;
+    }
+
+    return ret;
+
+}
+
+BOOL SetCursorPosition(int x, int y)
+{
+    COORD pos = { (SHORT)x, (SHORT)y };
+    return SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

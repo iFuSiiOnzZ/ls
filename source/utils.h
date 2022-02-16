@@ -16,40 +16,6 @@ void ShowHelp();
 void AddDirectoryToList(arguments_t *arguments, const char *path);
 
 /**
- * @brief Remove the beginning white spaces of a string.
- *
- * @param s     pointer to a valid string
- * @return      pointer to the 's' parameter
- */
-char *ltrim(char *s);
-
-/**
- * @brief Remove the trailing white spaces of a string.
- *
- * @param s     pointer to a valid string
- * @return      pointer to the 's' parameter
- */
-char *rtrim(char *s);
-
-/**
- * @brief Remove white spaces from the beginning and
- * end of a string.
- *
- * @param s     pointer to a valid string
- * @return      pointer to the 's' parameter
- */
-char *trim(char *s);
-
-/**
- * @brief Check if string ends with a given suffix.
- *
- * @param str       string to check
- * @param suffix    suffix to search into the string
- * @return BOOL     TRUE if it ends with the suffix, FALSE otherwise
- */
-BOOL StringEndsWith(const char *str, const char *suffix);
-
-/**
  * @brief Given a filename, extract directory from filename.
  * By default it will return the filename if path can not be
  * extracted.
@@ -82,12 +48,3 @@ const char *GetFileSizeAsText(size_t bytes);
  * @return const char* name of the directory.
  */
 const char *GetWorkingDirectory();
-
-/**
- * @brief Given a path it says it is current path, '.',
- * or parent path, '..'.
- *
- * @param path      relative path
- * @return BOOL     TRUE if it is '.' or '..', FALSE otherwise
- */
-BOOL IsDotPath(const char *path);
