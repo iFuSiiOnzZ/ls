@@ -5,12 +5,6 @@
 #include <stdio.h>
 #include <string.h>
 
-// Compute the size of compile time array
-#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
-
-// Check if pointer is not NULL, free it and assign NULL to it
-#define CHECK_DELETE(x) do { if(x) { free(x); x = NULL; } } while(0)
-
 // Maximum of 2 values
 #define MIN(x, y) ((x) < (y) ? (x) : (y))
 

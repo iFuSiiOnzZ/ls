@@ -13,6 +13,14 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
+// Check if pointer is not NULL, free it and assign NULL to it
+#define CHECK_DELETE(x) do { if(x) { free(x); x = NULL; } } while(0)
+
+// Compute the size of compile time array
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+
+///////////////////////////////////////////////////////////////////////////////
+
 /**
  * @brief Some predefined colors.
  */
