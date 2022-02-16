@@ -3,13 +3,7 @@
 #include "win32.h"
 
 #include <stdio.h>
-#include <stdlib.h>
-
-// Compute the size of compile time array
-#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
-
-// Check if pointer is not NULL, free it and assign NULL to it
-#define CHECK_DELETE(x) do { if(x) { free(x); x = NULL; } } while(0)
+#include <string.h>
 
 // Maximum of 2 values
 #define MIN(x, y) ((x) < (y) ? (x) : (y))
@@ -25,38 +19,31 @@ static BOOL g_PrintWithColor = FALSE;
 
 
 ///////////////////////////////////////////////////////////////////////////////
-#define NUM_COLS 64
+#define MAX_NUM_COLS 64 // Maximum number of columns
 
+/**
+ * @brief Column information.
+ *
+ * 'size'   : number of character needed for the column
+ */
 typedef struct col_t
 {
     size_t size;
 } col_t;
 
+/**
+ * @brief Row information.
+ *
+ * 'size'   : number of columns in the row
+ * 'cols'   : information of each column (maximun of 'MAX_NUM_COLS')
+ */
 typedef struct row_t
 {
     size_t size;
-    col_t cols[NUM_COLS];
+    col_t cols[MAX_NUM_COLS];
 } row_t;
 
 ///////////////////////////////////////////////////////////////////////////////
-
-/**
- * @brief Check if string ends with a given suffix.
- *
- * @param str       string to check
- * @param suffix    suffix to search into the string
- * @return BOOL     TRUE if it ends with the suffix, FALSE otherwise
- */
-static BOOL StringEndsWith(const char *str, const char *suffix)
-{
-    if (!str || !suffix) return FALSE;
-
-    size_t lenstr = strlen(str);
-    size_t lensuffix = strlen(suffix);
-
-    if (lensuffix > lenstr) return 0;
-    return strncmp(str + lenstr - lensuffix, suffix, lensuffix) == 0;
-}
 
 /**
  * @brief Prints text on the screen with a given color. If the global variable
@@ -207,58 +194,6 @@ static char GetContentType(const asset_t *data)
 }
 
 /**
- * @brief Get the metadata based on the asset extension. If the extension is not
- * found a predefined metadata based on the type it will be returned.
- *
- * @param data                      valid pointer to the asset
- * @return const asset_metadata_t*  pointer to the metadata structure
- */
-static const asset_metadata_t *GetAssetMetadata(const asset_t *data)
-{
-    char name[MAX_PATH];
-    strcpy_s(name, MAX_PATH, data->name);
-
-    for (size_t i = 0; i < MAX_PATH && name[i] != '\0'; ++i)
-    {
-        name[i] = (char)tolower(name[i]);
-    }
-
-    for (size_t i = 0; i < ARRAY_SIZE(g_AssetMetaData); ++i)
-    {
-        if (StringEndsWith(name, g_AssetMetaData[i].ext))
-        {
-            return &g_AssetMetaData[i];
-        }
-    }
-
-    // Symlink and directory
-    if (data->type.symlink && data->type.directory)
-    {
-        static asset_metadata_t symlinkdir = { 139, 233, 253, "", u8"\uf482" };
-        return &symlinkdir;
-    }
-
-    // Symlink and file
-    if (data->type.symlink)
-    {
-        static asset_metadata_t symlink = { 139, 233, 253, "", u8"\uf481" };
-        return &symlink;
-    }
-
-    // Directory
-    if (data->type.directory)
-    {
-        static asset_metadata_t dir = { 80, 250, 123, "", u8"\uf74a" };
-        return &dir;
-    }
-
-    // Any other type
-    static asset_metadata_t oth = { 255, 255, 255, "", u8"\uf15b" };
-    return &oth;
-}
-
-
-/**
  * @brief Get the number of columns to display the content as grid.
  *
  * @param content   pointer to the directory containing the assets
@@ -266,17 +201,17 @@ static const asset_metadata_t *GetAssetMetadata(const asset_t *data)
  */
 static row_t GetNumberOfColumns(const directory_t *content, size_t padding)
 {
-    int width = 0, height = 0, cols = NUM_COLS;
+    int width = 0, height = 0, cols = MAX_NUM_COLS;
     GetScreenBufferSize(&width, &height);
 
-    for (size_t i = 0, s = 0; i < content->size; ++i)
+    for (size_t i = 0; i < content->size; ++i)
     {
-        const asset_metadata_t *m = GetAssetMetadata(&content->data[i]);
-        s = strlen(content->data[i].name) + strlen(m->icon) + padding;
+        const asset_metadata_t *m = content->data[i].metadata;
+        size_t s = strlen(content->data[i].name) + strlen(m->icon) + padding;
 
         for (size_t j = i + 1, c = 1; j < content->size; ++j, ++c)
         {
-            m = GetAssetMetadata(&content->data[j]);
+            m = content->data[j].metadata;
             s += strlen(content->data[j].name);
 
             s += strlen(m->icon);
@@ -291,18 +226,17 @@ static row_t GetNumberOfColumns(const directory_t *content, size_t padding)
     }
 
     row_t ret = { 0 };
-    ret.size = CLAMP(cols, 1,  NUM_COLS);
+    ret.size = CLAMP(cols, 1,  MAX_NUM_COLS);
 
     compute_column_size:
-    memset(ret.cols, 0, sizeof(col_t) * NUM_COLS);
+    memset(ret.cols, 0, sizeof(col_t) * MAX_NUM_COLS);
 
     for (size_t i = 0; i < content->size; ++i)
     {
-        size_t ri = i % ret.size;
-        const asset_metadata_t *m = GetAssetMetadata(&content->data[i]);
+        const asset_metadata_t *m = content->data[i].metadata;
         size_t size = strlen(content->data[i].name) + strlen(m->icon) + padding;
 
-        col_t *c = &ret.cols[ri];
+        col_t *c = &ret.cols[i % ret.size];
         c->size = (size > c->size) ? size : c->size;
     }
 
@@ -378,17 +312,17 @@ void PrintAssetLongFormat(const directory_t *content, const char *directoryName,
 
         // File name
         textColor = GetTextNameColor(&content->data[i]);
-        const asset_metadata_t *assetMetadata = GetAssetMetadata(&content->data[i]);
+        const asset_metadata_t *m = content->data[i].metadata;
 
         if (arguments->showIcons)
         {
             if (arguments->virtualTerminal)
             {
-                color_printf_vt(assetMetadata->r, assetMetadata->g, assetMetadata->b, "%s ", assetMetadata->icon);
+                color_printf_vt(m->r, m->g, m->b, "%s ", m->icon);
             }
             else
             {
-                color_printf(textColor, "%s ", assetMetadata->icon);
+                color_printf(textColor, "%s ", m->icon);
             }
         }
 
@@ -396,7 +330,7 @@ void PrintAssetLongFormat(const directory_t *content, const char *directoryName,
         {
             if (arguments->virtualTerminal)
             {
-                color_printf_vt(assetMetadata->r, assetMetadata->g, assetMetadata->b, "%s", &content->data[i].path[directoryLength + 1]);
+                color_printf_vt(m->r, m->g, m->b, "%s", &content->data[i].path[directoryLength + 1]);
             }
             else
             {
@@ -407,7 +341,7 @@ void PrintAssetLongFormat(const directory_t *content, const char *directoryName,
         {
             if (arguments->virtualTerminal)
             {
-                color_printf_vt(assetMetadata->r, assetMetadata->g, assetMetadata->b, "%s", content->data[i].name);
+                color_printf_vt(m->r, m->g, m->b, "%s", content->data[i].name);
             }
             else
             {
@@ -441,7 +375,7 @@ void PrintAssetShortFormat(const directory_t *content, const arguments_t *argume
         if (i > 0 && ri == 0) putchar('\n');
 
         text_color_t textColor = GetTextNameColor(&content->data[i]);
-        const asset_metadata_t *m = GetAssetMetadata(&content->data[i]);
+        const asset_metadata_t *m = content->data[i].metadata;
 
         if (arguments->showIcons)
         {
@@ -479,10 +413,25 @@ void ShowMetaData(const arguments_t *arguments)
 {
     g_PrintWithColor = arguments->colors;
 
-    for (size_t i = 0; i < ARRAY_SIZE(g_AssetMetaData); ++i)
+    for (size_t i = 0; i < ARRAY_SIZE(g_AssetFullNameMetaData); ++i)
     {
         const char fmt[] = "(%3d, %3d, %3d)  %s  %s\n";
-        const asset_metadata_t *m = &g_AssetMetaData[i];
+        const asset_metadata_t *m = &g_AssetFullNameMetaData[i];
+
+        if (arguments->virtualTerminal)
+        {
+            color_printf_vt(m->r, m->g, m->b, fmt, m->r, m->g, m->b, m->icon, m->ext);
+        }
+        else
+        {
+            printf_s(fmt, m->r, m->g, m->b, m->icon, m->ext);
+        }
+    }
+
+    for (size_t i = 0; i < ARRAY_SIZE(g_AssetExtensionMetaData); ++i)
+    {
+        const char fmt[] = "(%3d, %3d, %3d)  %s  %s\n";
+        const asset_metadata_t *m = &g_AssetExtensionMetaData[i];
 
         if (arguments->virtualTerminal)
         {

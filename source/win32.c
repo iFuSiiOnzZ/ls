@@ -10,9 +10,6 @@
 // Check if handle is not NULL, close it and assign NULL to it
 #define CHECK_CLOSE_HANDLE(x) do { if(x) { CloseHandle(x); x = NULL; } } while(0)
 
-// Check if pointer is not NULL, free it and assign NULL to it
-#define CHECK_DELETE(x) do { if(x) { free(x); x = NULL; } } while(0)
-
 ///////////////////////////////////////////////////////////////////////////////
 
 const char *GetLastErrorAsString()

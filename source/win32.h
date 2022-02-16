@@ -90,8 +90,8 @@ BOOL GetScreenBufferSize(int *width, int *height);
 /**
  * @brief Get the terminal cursor position.
  *
- * @param x     valid pointer where 'x' coordina es stored
- * @param y     valid pointer where 'y' coordina es stored
+ * @param x     valid pointer where 'x' coordinate is stored
+ * @param y     valid pointer where 'y' coordinate is stored
  * @return BOOL TRUE if it can be retrieved, FALSE otherwise
  */
 BOOL GetCursorPosition(int *x, int *y);

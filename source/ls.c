@@ -22,11 +22,6 @@ static const char VERSION[] = "0.0.1 "__DATE__" "__TIME__;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-// Check if pointer is not NULL, free it and assign NULL to it
-#define CHECK_DELETE(x) do { if(x) { free(x); x = NULL; } } while(0)
-
-///////////////////////////////////////////////////////////////////////////////
-
 /**
  * @brief Parse short arguments
  * ex: -l, -a, -laR, ...
