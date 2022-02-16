@@ -65,6 +65,24 @@ typedef enum sort_by_e
 
 ///////////////////////////////////////////////////////////////////////////////
 
+
+/**
+ * @brief Data structure containing the associated icon of a file extension
+ * and it's color. The RGB color it is only used with virtual terminal.
+ *
+ * 'r'    : red color
+ * 'g'    : green color
+ * 'b'    : blue color
+ *
+ * 'ext'  : extension name, has to include the dot '.'
+ * 'icons': UTF-8 string representation the icon
+ */
+typedef struct asset_metadata_t
+{
+    int r, g, b;
+    const char *ext, *icon;
+} asset_metadata_t;
+
 /**
  * @brief User access rights for a given asset.
  *
@@ -134,6 +152,8 @@ typedef struct timestamp_t
  */
 typedef struct asset_t
 {
+    const asset_metadata_t *metadata;
+
     access_rights_t accessRights;
     asset_type_t type;
 
@@ -217,23 +237,6 @@ typedef struct arguments_t
     sort_by_e sortField;
     directory_list_t *currentDir, *lastDir;
 } arguments_t;
-
-/**
- * @brief Data structure containing the associated icon of a file extension
- * and it's color. The RGB color it is only used with virtual terminal.
- *
- * 'r'    : red color
- * 'g'    : green color
- * 'b'    : blue color
- *
- * 'ext'  : extension name, has to include the dot '.'
- * 'icons': UTF-8 string representation the icon
- */
-typedef struct asset_metadata_t
-{
-    int r, g, b;
-    const char *ext, *icon;
-} asset_metadata_t;
 
 ///////////////////////////////////////////////////////////////////////////////
 
