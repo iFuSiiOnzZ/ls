@@ -3,6 +3,7 @@
 #include "win32.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 // Maximum of 2 values
@@ -197,61 +198,54 @@ static char GetContentType(const asset_t *data)
  * @brief Get the number of columns to display the content as grid.
  *
  * @param content   pointer to the directory containing the assets
+ * @param showIcons take into account the icons?
  * @return row_t    number of columns
  */
-static row_t GetNumberOfColumns(const directory_t *content, size_t padding)
+static row_t GetNumberOfColumns(const directory_t *content, BOOL showIcons, size_t padding)
 {
-    int width = 0, height = 0, cols = MAX_NUM_COLS;
+    size_t totalSize = 0;
+    int width = 0, height = 0;
+
     GetScreenBufferSize(&width, &height);
+    size_t *textSizeArray = (size_t*)malloc(sizeof(size_t) * content->size);
 
-    for (size_t i = 0; i < content->size; ++i)
+    for (size_t i = 0, s = 0; i < content->size; ++i)
     {
-        const asset_metadata_t *m = content->data[i].metadata;
-        size_t s = strlen(content->data[i].name) + strlen(m->icon) + padding;
+        s = strlen(content->data[i].name) + padding;
+        s += showIcons ? strlen(content->data[i].metadata->icon) : 0;
 
-        for (size_t j = i + 1, c = 1; j < content->size; ++j, ++c)
-        {
-            m = content->data[j].metadata;
-            s += strlen(content->data[j].name);
-
-            s += strlen(m->icon);
-            s += padding;
-
-            if (s >= width)
-            {
-                cols = c < cols ? (int)c : cols;
-                break;
-            }
-        }
+        totalSize += s;
+        textSizeArray[i] = s;
     }
+
+    size_t avgColSize = totalSize / content->size;
+    size_t numCols = width / avgColSize, maxSize = 0;
 
     row_t ret = { 0 };
-    ret.size = CLAMP(cols, 1,  MAX_NUM_COLS);
+    ret.size = CLAMP(numCols, 1,  MAX_NUM_COLS);
 
-    compute_column_size:
-    memset(ret.cols, 0, sizeof(col_t) * MAX_NUM_COLS);
+compute_column_size:
+    maxSize = 0;
+    memset(ret.cols, 0, sizeof(size_t) * ret.size);
 
     for (size_t i = 0; i < content->size; ++i)
     {
-        const asset_metadata_t *m = content->data[i].metadata;
-        size_t size = strlen(content->data[i].name) + strlen(m->icon) + padding;
-
         col_t *c = &ret.cols[i % ret.size];
-        c->size = (size > c->size) ? size : c->size;
+        c->size = MAX(textSizeArray[i], c->size);
     }
 
-    size_t colSize = 0;
     for (size_t i = 0; i < ret.size; ++i)
     {
-        colSize += ret.cols[i].size;
+        maxSize += ret.cols[i].size;
     }
 
-    if (colSize >= width && ret.size > 1)
+    if (maxSize > width && ret.size > 1)
     {
         --ret.size;
         goto compute_column_size;
     }
 
+    CHECK_DELETE(textSizeArray);
     return ret;
 }
 
@@ -365,11 +359,11 @@ void PrintAssetLongFormat(const directory_t *content, const char *directoryName,
 
 void PrintAssetShortFormat(const directory_t *content, const arguments_t *arguments)
 {
-    static const size_t extraspace = 3;
     g_PrintWithColor = arguments->colors;
-    row_t row = GetNumberOfColumns(content, extraspace);
+    size_t extraspace = arguments->showIcons ? 3 : 2;
+    row_t row = GetNumberOfColumns(content, arguments->showIcons, extraspace);
 
-    for (size_t i = 0; i < content->size; ++i)
+    for (size_t i = 0, w = 0; i < content->size; ++i)
     {
         size_t ri = i % row.size;
         if (i > 0 && ri == 0) putchar('\n');
@@ -398,12 +392,12 @@ void PrintAssetShortFormat(const directory_t *content, const arguments_t *argume
             color_printf(textColor, "%s", content->data[i].name);
         }
 
-        const col_t *c = &row.cols[ri];
-        int w = (int)(strlen(m->icon) + strlen(content->data[i].name) + 1);
+        w = strlen(content->data[i].name);
+        w += arguments->showIcons ? strlen(m->icon) + 1 : 0;
 
-        if (w < c->size && row.size > 1)
+        if (row.size > 1 && w < row.cols[ri].size)
         {
-            int padLen = (int)(c->size - w);
+            int padLen = (int)(row.cols[ri].size - w);
             printf_s("%*.*s", padLen, padLen, " ");
         }
     }
