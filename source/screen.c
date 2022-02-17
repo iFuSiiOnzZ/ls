@@ -209,9 +209,9 @@ static row_t GetNumberOfColumns(const directory_t *content, BOOL showIcons, size
     GetScreenBufferSize(&width, &height);
     size_t *textSizeArray = (size_t*)malloc(sizeof(size_t) * content->size);
 
-    for (size_t i = 0, s = 0; i < content->size; ++i)
+    for (size_t i = 0; i < content->size; ++i)
     {
-        s = strlen(content->data[i].name) + padding;
+        size_t s = strlen(content->data[i].name) + padding;
         s += showIcons ? strlen(content->data[i].metadata->icon) : 0;
 
         totalSize += s;
@@ -360,10 +360,12 @@ void PrintAssetLongFormat(const directory_t *content, const char *directoryName,
 void PrintAssetShortFormat(const directory_t *content, const arguments_t *arguments)
 {
     g_PrintWithColor = arguments->colors;
-    size_t extraspace = arguments->showIcons ? 3 : 2;
+    BOOL showIcons = arguments->showIcons;
+
+    size_t extraspace = showIcons ? 3 : 2;
     row_t row = GetNumberOfColumns(content, arguments->showIcons, extraspace);
 
-    for (size_t i = 0, w = 0; i < content->size; ++i)
+    for (size_t i = 0; i < content->size; ++i)
     {
         size_t ri = i % row.size;
         if (i > 0 && ri == 0) putchar('\n');
@@ -392,12 +394,12 @@ void PrintAssetShortFormat(const directory_t *content, const arguments_t *argume
             color_printf(textColor, "%s", content->data[i].name);
         }
 
-        w = strlen(content->data[i].name);
-        w += arguments->showIcons ? strlen(m->icon) + 1 : 0;
+        size_t s = strlen(content->data[i].name);
+        s += showIcons ? strlen(m->icon) + 1 : 0;
 
-        if (row.size > 1 && w < row.cols[ri].size)
+        if (row.size > 1 && s < row.cols[ri].size)
         {
-            int padLen = (int)(row.cols[ri].size - w);
+            int padLen = (int)(row.cols[ri].size - s);
             printf_s("%*.*s", padLen, padLen, " ");
         }
     }
