@@ -245,6 +245,9 @@ compute_column_size:
         goto compute_column_size;
     }
 
+    // Note(Andrei): Remove padding from last column
+    ret.cols[ret.size - 1].size -= padding;
+
     CHECK_DELETE(textSizeArray);
     return ret;
 }
