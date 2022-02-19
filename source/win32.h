@@ -85,7 +85,7 @@ BOOL DisableVirtualTerminal();
  * @param height    valid pointer where the height is stored
  * @return BOOL     TRUE if it can be retrieved, FALSE otherwise
  */
-BOOL GetScreenBufferSize(int *width, int *height);
+BOOL GetScreenBufferSize(size_t *width, size_t *height);
 
 /**
  * @brief Get the terminal cursor position.

@@ -205,7 +205,7 @@ BOOL DisableVirtualTerminal()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-BOOL GetScreenBufferSize(int *width, int *height)
+BOOL GetScreenBufferSize(size_t *width, size_t *height)
 {
     CONSOLE_SCREEN_BUFFER_INFO csbi = { 0 };
     int ret = GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);

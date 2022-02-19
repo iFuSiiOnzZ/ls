@@ -204,7 +204,7 @@ static char GetContentType(const asset_t *data)
 static row_t GetNumberOfColumns(const directory_t *content, BOOL showIcons, size_t padding)
 {
     size_t totalSize = 0;
-    int width = 0, height = 0;
+    size_t width = 0, height = 0;
 
     GetScreenBufferSize(&width, &height);
     size_t *textSizeArray = (size_t*)malloc(sizeof(size_t) * content->size);
