@@ -219,25 +219,4 @@ BOOL GetScreenBufferSize(size_t *width, size_t *height)
     return ret;
 }
 
-BOOL GetCursorPosition(int *x, int *y)
-{
-    CONSOLE_SCREEN_BUFFER_INFO cbsi;
-    int ret = GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cbsi);
-
-    if (ret)
-    {
-        *x = cbsi.dwCursorPosition.X;
-        *y = cbsi.dwCursorPosition.Y;
-    }
-
-    return ret;
-
-}
-
-BOOL SetCursorPosition(int x, int y)
-{
-    COORD pos = { (SHORT)x, (SHORT)y };
-    return SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
-}
-
 ///////////////////////////////////////////////////////////////////////////////

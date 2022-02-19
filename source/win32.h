@@ -86,21 +86,3 @@ BOOL DisableVirtualTerminal();
  * @return BOOL     TRUE if it can be retrieved, FALSE otherwise
  */
 BOOL GetScreenBufferSize(size_t *width, size_t *height);
-
-/**
- * @brief Get the terminal cursor position.
- *
- * @param x     valid pointer where 'x' coordinate is stored
- * @param y     valid pointer where 'y' coordinate is stored
- * @return BOOL TRUE if it can be retrieved, FALSE otherwise
- */
-BOOL GetCursorPosition(int *x, int *y);
-
-/**
- * @brief Set the terminal cursor position.
- *
- * @param x     cursor 'x' coordinate
- * @param y     cursor 'y' coordinate
- * @return BOOL TRUE if it can be set, FALSE otherwise
- */
-BOOL SetCursorPosition(int x, int y);
