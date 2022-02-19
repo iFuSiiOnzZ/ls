@@ -60,7 +60,7 @@ TIPS
 
 If you are using Command Prompt take into consideration to make an [alias using doskey](https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/doskey) with the parameters you mostly find useful in your day to day. For Powershell make a function in your profile script and bind it to an [alias using Set-Alias](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/set-alias?view=powershell-7.2) name.
 
-```cmd
+```bat
 # Command prompt
 doskey ls=ls.exe --icons --colors --virterm --group-directories-first $*
 ```
@@ -75,11 +75,11 @@ function List-Dir()
 Set-Alias -name 'ls' -value List-Dir -Option AllScope
 ```
 
-There is an extra hidden option, `--smd` (show metadata), which shows a list of available extensions with their color and icon of each.
+There is an extra hidden option, `--smd` (show metadata), which shows a list of available extensions with their color and the icon of each.
 
-```text
+```shell
 # Output format
-(r, g, b)  icons  extension
+(r, g, b)  icon  extension
 ```
 
 ## Project distribution
@@ -88,14 +88,28 @@ There is an extra hidden option, `--smd` (show metadata), which shows a list of 
     | -> cl.bat             Searching and loading visual studio environment [vcvars.bat]
     | -> build.bat          Build script (calls cl.bat and build the project) [use -h for help]
 | -> source
-    | -> ls.c               Main entry point, arguments parsing and screen print
-    | -> types.h            Data structure and enumerators used by the program
-    | -> utils.[c|h]        Small help functions, just to make the life easier
+    | -> ls.c               Main entry point, arguments parsing
+    | -> types.h            Data structure and enumerators
     | -> sort.[c|h]         Sort functions, sort by size, date, etc
+    | -> utils.[c|h]        Small help functions, just to make the life easier
     | -> win32.[c|h]        Windows functions for retrieving the owner, permissions, etc
+    | -> screen.[c|h]       Print to screen the listed files and directories
     | -> directory.[c|h]    Windows functions to get the content of the directory
 | -> resources
     | -> screenshot.jpg     Screenshot used on this README
+```
+
+To build the project make sure you have installed one of the versions of [Visual Studio](https://visualstudio.microsoft.com) listed on [cl.bat](utils/cl.bat). Once you have it installed just run [the build script](utils/build.bat), it will generate a build directory on the root of the project.
+
+```
+build.bat [--build-type=Release|Debug] [--platform=x64|x86] [--build-path=<output directory>] [--install=<directory>]
+By default: --build-type=Release --platform=x64 --build-path=<project root>
+   --build-type    type of build, 'Release' or 'Debug'
+   --build-path    directory where binaries are generated
+   --platform      'x64' for 64 bits or 'x86' for 32 bits
+   --install       copy the program to the given directory
+   --clean         remove the previous build data
+   --help, -h      show help
 ```
 
 ## Roadmap

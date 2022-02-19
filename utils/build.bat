@@ -112,7 +112,6 @@ REM
 REM Copy 'ls.exe' to a given path
 REM
 if not "%INSTALL_PATH%" == "" (
-    echo.
     echo copy /y "%BIN_PATH%\ls.exe" "%INSTALL_PATH%"
     copy /y "%BIN_PATH%\ls.exe" "%INSTALL_PATH%"
 )
