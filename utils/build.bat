@@ -68,14 +68,16 @@ REM
 REM Create build directories
 REM
 set BIN_PATH=%BUILD_PATH%\build\bin
-set OBJ_PATH=%BUILD_PATH%\build\obj
+set OBJ_PATH=%BUILD_PATH%\build\obj\%BUILD_TYPE%\%PLATFORM%
 
 REM
 REM Delete the build directory
 REM
-if %CLEAN_BUILD% == true if exist "%BUILD_PATH%\build" (
-    echo Remove build directory: "%BUILD_PATH%\build"
-    rmdir /s /q "%BUILD_PATH%\build"
+if %CLEAN_BUILD% == true (
+    if exist "%BUILD_PATH%\build" (
+        echo Remove build directory: "%BUILD_PATH%\build"
+        rmdir /s /q "%BUILD_PATH%\build"
+    )
     goto good_exit
 )
 
@@ -110,7 +112,6 @@ REM
 REM Copy 'ls.exe' to a given path
 REM
 if not "%INSTALL_PATH%" == "" (
-    echo.
     echo copy /y "%BIN_PATH%\ls.exe" "%INSTALL_PATH%"
     copy /y "%BIN_PATH%\ls.exe" "%INSTALL_PATH%"
 )

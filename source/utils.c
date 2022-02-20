@@ -4,6 +4,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+/**
+ * @brief Given a string and a list of delimiters, find the where in the string
+ * it is the last characted defined by delimiters.  The delimiters is also a
+ * string where each character of the string is a delimiter.
+ *
+ * @param str           pointer to a valid string
+ * @param delimiters    pointer to a valid list of delimiters
+ * @return const char*  pointer to the character or NULL if not found.
+ */
+const char *FindLastDelimiter(const char *str, const char *delimiters)
+{
+    if (str == NULL || delimiters == NULL) return NULL;
+    size_t len = strlen(str);
+
+    if (len < 1)
+    {
+        return NULL;
+    }
+
+    for (const char *c = str + len - 1; c >= str; --c)
+    {
+        const char d[2] = { *c, '\0' };
+        if (strstr(delimiters, d)) return c;
+    }
+
+    return NULL;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 void ShowHelp()
 {
     {
@@ -60,8 +91,6 @@ void ShowHelp()
     }
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
 void AddDirectoryToList(arguments_t *arguments, const char *path)
 {
     directory_list_t *dir = malloc(sizeof(directory_list_t));
@@ -82,27 +111,6 @@ void AddDirectoryToList(arguments_t *arguments, const char *path)
     }
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
-const char *FindLastDelimiter(const char *str, const char *delimiters)
-{
-    if (str == NULL || delimiters == NULL) return NULL;
-    size_t len = strlen(str);
-
-    if (len < 1)
-    {
-        return NULL;
-    }
-
-    for (const char *c = str + len - 1; c >= str; --c)
-    {
-        const char d[2] = { *c, '\0' };
-        if (strstr(delimiters, d)) return c;
-    }
-
-    return NULL;
-}
-
 const char *GetDirectoryFromPath(const char *path, char *buffer, size_t bufferSize)
 {
     sprintf_s(buffer, bufferSize, "%s", path);
@@ -114,12 +122,13 @@ const char *GetDirectoryFromPath(const char *path, char *buffer, size_t bufferSi
     }
 
     size_t len = strlen(buffer);
-    if (buffer[len - 1] == '\\' || buffer[len - 1] == '/') buffer[len - 1] = '\0';
+    if (len > 0 && strstr("\\/", &buffer[len - 1]))
+    {
+        buffer[len - 1] = '\0';
+    }
 
     return buffer;
 }
-
-///////////////////////////////////////////////////////////////////////////////
 
 const char *GetFileSizeAsText(size_t bytes)
 {

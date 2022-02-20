@@ -180,13 +180,13 @@ static directory_t *ResizeAssetArray(directory_t **container)
  * @brief Get the metadata based on the asset extension. If the extension is not
  * found a predefined metadata based on the type it will be returned.
  *
- * @param data                      valid pointer to the asset
+ * @param asset                     valid pointer to the asset
  * @return const asset_metadata_t*  pointer to the metadata structure
  */
-static const asset_metadata_t *GetAssetMetadata(const asset_t *data)
+static const asset_metadata_t *GetAssetMetadata(const asset_t *asset)
 {
     char name[MAX_PATH] = { 0 };
-    strcpy_s(name, MAX_PATH, data->name);
+    strcpy_s(name, MAX_PATH, asset->name);
 
     for (size_t i = 0; i < MAX_PATH && name[i] != '\0'; ++i)
     {
@@ -209,65 +209,53 @@ static const asset_metadata_t *GetAssetMetadata(const asset_t *data)
         }
     }
 
-    // Symlink and directory
-    if (data->type.symlink && data->type.directory)
+    // Symlink and directory 
+    if (asset->type.symlink && asset->type.directory)
     {
         static asset_metadata_t symlinkdir = { 139, 233, 253, "", u8"\uf482" };
         return &symlinkdir;
     }
 
-    // Symlink and file
-    if (data->type.symlink)
+    // Symlink and file 
+    if (asset->type.symlink)
     {
         static asset_metadata_t symlink = { 139, 233, 253, "", u8"\uf481" };
         return &symlink;
     }
 
-    // Directory
-    if (data->type.directory)
+    // Directory 
+    if (asset->type.directory)
     {
         static asset_metadata_t dir = { 80, 250, 123, "", u8"\uf74a" };
         return &dir;
     }
 
-    // Any other type
+    // Any other type 
     static asset_metadata_t oth = { 255, 255, 255, "", u8"\uf15b" };
     return &oth;
 }
 
-/**
- * @brief Get the assets inside a given path. Wild cards can be used
- * for the asset name, the wild card is represented by '*'.
- * ex: C:\Windows\System32\*.dll
- *
- * @param directory         pointer to the directory path
- * @param arguments         pointer to the parsed arguments structure
- * @return directory_t*     container with the assets information or NULL otherwise
- */
+///////////////////////////////////////////////////////////////////////////////
+
 directory_t *GetDirectoryContent(const char *path, arguments_t *arguments)
 {
-    if (path == NULL)
-    {
-        return NULL;
-    }
-
-    char assetPath[MAX_PATH] = { 0 };
+    char buffer[MAX_PATH] = { 0 };
     WIN32_FIND_DATAA fd = { 0 };
 
     if (strstr(path, "*") || IsValidDocument(path))
     {
-        snprintf(assetPath, sizeof(assetPath), "%s", path);
+        snprintf(buffer, sizeof(buffer), "%s", path);
     }
     else if (IsValidDirectory(path))
     {
-        snprintf(assetPath, sizeof(assetPath), "%s%s", path, "\\*");
+        snprintf(buffer, sizeof(buffer), "%s%s", path, "\\*");
     }
     else
     {
         return NULL;
     }
 
-    HANDLE hFind = FindFirstFileExA(assetPath, FindExInfoStandard, &fd, FindExSearchNameMatch, NULL, 0);
+    HANDLE hFind = FindFirstFileExA(buffer, FindExInfoStandard, &fd, FindExSearchNameMatch, NULL, 0);
     if (hFind == INVALID_HANDLE_VALUE) return NULL;
 
     directory_t *retData = NULL;
@@ -292,17 +280,17 @@ directory_t *GetDirectoryContent(const char *path, arguments_t *arguments)
             continue;
         }
 
-        size_t assetIndex = retData->size++;
-        asset_t *asset = &retData->data[assetIndex];
+        size_t index = retData->size++;
+        asset_t *asset = &retData->data[index];
 
         memset(asset, 0, sizeof(asset_t));
-        snprintf(assetPath, sizeof(assetPath), "%s\\%s", currentPath, fd.cFileName);
+        snprintf(buffer, sizeof(buffer), "%s\\%s", currentPath, fd.cFileName);
 
         strcpy_s(asset->name, PATH_SIZE, fd.cFileName);
-        strcpy_s(asset->path, PATH_SIZE, assetPath);
+        strcpy_s(asset->path, PATH_SIZE, buffer);
 
-        GetPermissions(assetPath, asset);
-        GetOwnerAndDomain(assetPath, asset);
+        GetPermissions(buffer, asset);
+        GetOwnerAndDomain(buffer, asset);
 
         GetTimestaps(&fd, arguments, asset);
         TranslateAttributes(fd.dwFileAttributes, asset);
@@ -312,12 +300,12 @@ directory_t *GetDirectoryContent(const char *path, arguments_t *arguments)
 
         if (asset->type.symlink)
         {
-            GetLinkTarget(assetPath, asset);
+            GetLinkTarget(buffer, asset);
         }
 
         if (arguments->recursiveList && asset->type.directory && !IsDotPath(fd.cFileName))
         {
-            AddDirectoryToList(arguments, assetPath);
+            AddDirectoryToList(arguments, buffer);
         }
     } while (FindNextFileA(hFind, &fd));
 

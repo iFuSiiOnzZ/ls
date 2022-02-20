@@ -234,14 +234,12 @@ int main(int argc, char *argv[])
         AddDirectoryToList(&arguments, GetWorkingDirectory());
     }
 
-    BOOL extraDirs = arguments.currentDir->next != NULL || arguments.recursiveList;
-
     while (arguments.currentDir != NULL)
     {
         directory_list_t *dir = arguments.currentDir;
         directory_t *directory = GetDirectoryContent(dir->path, &arguments);
 
-        if (directory == NULL || dir == NULL)
+        if (directory == NULL)
         {
             printf_s("\"%s\": No such file or directory\n", dir->path);
             goto next_dir;
@@ -253,7 +251,7 @@ int main(int argc, char *argv[])
         }
 
         SortDirectoryContent(directory, &arguments);
-        if (extraDirs) printf_s("%s\n", dir->path);
+        if (dir->next) printf_s("%s\n", dir->path);
 
         if (arguments.showLongFormat)
         {
@@ -269,7 +267,7 @@ int main(int argc, char *argv[])
     next_dir:
         arguments.currentDir = arguments.currentDir->next;
         CHECK_DELETE(directory);
-        free(dir);
+        CHECK_DELETE(dir);
     }
 
     if (arguments.virtualTerminal)
