@@ -12,7 +12,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-const char *GetLastErrorAsString()
+static const char *GetLastErrorAsString()
 {
 
     DWORD errorMessageID = GetLastError();
@@ -122,7 +122,6 @@ BOOL GetOwnerAndDomain(const char *path, asset_t *asset)
     return result;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 
 BOOL GetLinkTarget(const char *path, asset_t *asset)
 {
@@ -135,7 +134,6 @@ BOOL GetLinkTarget(const char *path, asset_t *asset)
     return wBytes < MAX_PATH;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 
 void TranslateAttributes(size_t attributes, asset_t *asset)
 {
@@ -175,7 +173,6 @@ size_t TranslateFileSize(WIN32_FIND_DATAA *fd)
     return (size_t)ul.QuadPart;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 
 BOOL EnableVirtualTerminal()
 {
@@ -203,9 +200,7 @@ BOOL DisableVirtualTerminal()
     return SetConsoleMode(handleOut, consoleMode);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
-BOOL GetScreenBufferSize(int *width, int *height)
+BOOL GetScreenBufferSize(size_t *width, size_t *height)
 {
     CONSOLE_SCREEN_BUFFER_INFO csbi = { 0 };
     int ret = GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
@@ -217,27 +212,6 @@ BOOL GetScreenBufferSize(int *width, int *height)
     }
 
     return ret;
-}
-
-BOOL GetCursorPosition(int *x, int *y)
-{
-    CONSOLE_SCREEN_BUFFER_INFO cbsi;
-    int ret = GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cbsi);
-
-    if (ret)
-    {
-        *x = cbsi.dwCursorPosition.X;
-        *y = cbsi.dwCursorPosition.Y;
-    }
-
-    return ret;
-
-}
-
-BOOL SetCursorPosition(int x, int y)
-{
-    COORD pos = { (SHORT)x, (SHORT)y };
-    return SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

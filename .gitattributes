@@ -1,1 +1,9 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
+# Declare files that will always have CRLF '\r\n' line endings on checkout.
 *.bat text eol=crlf
+
+# Declare files that will always have LF '\n' line endings on checkout.
+*.c text eol=lf
+*.h text eol=lf
