@@ -118,7 +118,9 @@ const char *GetDirectoryFromPath(const char *path, char *buffer, size_t bufferSi
     if (IsValidDocument(path) || strstr(buffer, "*"))
     {
         char *c = (char *)FindLastDelimiter(buffer, "\\/");
-        *c = '\0';
+
+        if (c == NULL) strncpy_s(buffer, bufferSize, GetWorkingDirectory(), bufferSize);
+        else *c = '\0';
     }
 
     size_t len = strlen(buffer);
