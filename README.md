@@ -8,9 +8,6 @@ _**ls**_ is a replacement for the _**dir**_ command, it is inspired by the Unix 
 ## Table of Contents
 - [Features](#features)
 - [Usage](#usage)
-- [Project distribution](#project-distribution)
-- [Roadmap](#roadmap)
-- [Donations](#donations)
 - [License](#license)
 
 ## Features
@@ -81,47 +78,5 @@ There is an extra hidden option, `--smd` (show metadata), which shows a list of 
 # Output format
 (r, g, b)  icon  extension
 ```
-
-## Project distribution
-```
-| -> utils
-    | -> cl.bat             Searching and loading visual studio environment [vcvars.bat]
-    | -> build.bat          Build script (calls cl.bat and build the project) [use -h for help]
-| -> source
-    | -> ls.c               Main entry point, arguments parsing
-    | -> types.h            Data structure and enumerators
-    | -> sort.[c|h]         Sort functions, sort by size, date, etc
-    | -> utils.[c|h]        Small help functions, just to make the life easier
-    | -> win32.[c|h]        Windows functions for retrieving the owner, permissions, etc
-    | -> screen.[c|h]       Print to screen the listed files and directories
-    | -> directory.[c|h]    Windows functions to get the content of the directory
-| -> resources
-    | -> screenshot.jpg     Screenshot used on this README
-```
-
-To build the project make sure you have installed one of the versions of [Visual Studio](https://visualstudio.microsoft.com) listed on [cl.bat](utils/cl.bat). Once you have it installed just run [the build script](utils/build.bat), it will generate a build directory on the root of the project.
-
-```
-build.bat [--build-type=Release|Debug] [--platform=x64|x86] [--build-path=<output directory>] [--install=<directory>]
-By default: --build-type=Release --platform=x64 --build-path=<project root>
-   --build-type    type of build, 'Release' or 'Debug'
-   --build-path    directory where binaries are generated
-   --platform      'x64' for 64 bits or 'x86' for 32 bits
-   --install       copy the program to the given directory
-   --clean         remove the previous build data
-   --help, -h      show help
-```
-
-## Roadmap
-* Consider configuration file for colors and icons
-
-## Donations
-This is free, open-source software. If you'd like to support the development of future projects, or say thanks for this one, you can donate:
-| Crypto | Address | Network |
-|----------|:-------------:|------:|
-| BTC | 1HanuT8wZo85kMDShkMy6TsJo1VJ6mzsWs | BTC |
-| ETH | 0x8e249fb24e71459184c836f9fc53d32f09d44555 | ERC20 |
-| USDT | TXkofuYzGiLTS6GP2K2RMKJ4y6xqBZV8Pf | TRC20 |
-
 ## License
 ls.exe is distributed under the terms of the Apache License Version 2.0. A complete version of the license is available in the [LICENSE.md](LICENSE.md) in this repository. Any contribution made to this project will be licensed under the Apache License Version 2.0.
