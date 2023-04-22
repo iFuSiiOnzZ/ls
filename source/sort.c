@@ -11,51 +11,51 @@ static char GetContentType(const asset_t *data)
     return 'z';
 }
 
-int OrderByDirectoryFirst(const void *rhv, const void *lhv)
+int OrderByDirectoryFirst(const void *lhv, const void *rhv)
 {
-    const asset_t *a = rhv; const asset_t *b = lhv;
+    const asset_t *a = lhv; const asset_t *b = rhv;
     return GetContentType(a) - GetContentType(b);
 }
 
-int OrderByName(const void *rhv, const void *lhv)
+int OrderByName(const void *lhv, const void *rhv)
 {
-    const asset_t *a = rhv; const asset_t *b = lhv;
+    const asset_t *a = lhv; const asset_t *b = rhv;
     return _strcmpi(a->name, b->name);
 }
 
-int OrderByGroup(const void *rhv, const void *lhv)
+int OrderByGroup(const void *lhv, const void *rhv)
 {
-    const asset_t *a = rhv; const asset_t *b = lhv;
+    const asset_t *a = lhv; const asset_t *b = rhv;
     return _strcmpi(a->domain, b->domain);
 }
 
-int OrderByOwner(const void *rhv, const void *lhv)
+int OrderByOwner(const void *lhv, const void *rhv)
 {
-    const asset_t *a = rhv; const asset_t *b = lhv;
+    const asset_t *a = lhv; const asset_t *b = rhv;
     return _strcmpi(a->owner, b->owner);
 }
 
-int OrderBySize(const void *rhv, const void *lhv)
+int OrderBySize(const void *lhv, const void *rhv)
 {
-    const asset_t *a = rhv; const asset_t *b = lhv;
+    const asset_t *a = lhv; const asset_t *b = rhv;
     return (int)((long long)b->size - (long long)a->size);
 }
 
-int OrderByCreationTimestamp(const void *rhv, const void *lhv)
+int OrderByCreationTimestamp(const void *lhv, const void *rhv)
 {
-    const asset_t *a = rhv; const asset_t *b = lhv;
+    const asset_t *a = lhv; const asset_t *b = rhv;
     return (int)((long long)b->timestamp.creation - (long long)a->timestamp.creation);
 }
 
-int OrderByAccessedTimestamp(const void *rhv, const void *lhv)
+int OrderByAccessedTimestamp(const void *lhv, const void *rhv)
 {
-    const asset_t *a = rhv; const asset_t *b = lhv;
+    const asset_t *a = lhv; const asset_t *b = rhv;
     return (int)((long long)b->timestamp.access - (long long)a->timestamp.access);
 }
 
-int OrderByModifiedTimestamp(const void *rhv, const void *lhv)
+int OrderByModifiedTimestamp(const void *lhv, const void *rhv)
 {
-    const asset_t *a = rhv; const asset_t *b = lhv;
+    const asset_t *a = lhv; const asset_t *b = rhv;
     return (int)((long long)b->timestamp.modification - (long long)a->timestamp.modification);
 }
 
