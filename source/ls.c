@@ -159,7 +159,7 @@ static const char **ParseLongArgument(const char **arg, arguments_t *arguments)
  * @param argv          pointer of char array, the arguments
  * @return arguments_t the data structure of the arguments parsed
  */
-static arguments_t ParseArguments(int argc, const char *argv[])
+static arguments_t ParseArguments(int argc, const char **argv)
 {
     arguments_t retData = { 0 };
     const char **currentArg = argv + 1;
@@ -197,7 +197,7 @@ int main(int argc, char *argv[])
     }
     #endif
 
-    arguments_t arguments = ParseArguments(argc, argv);
+    arguments_t arguments = ParseArguments(argc, (const char **)argv);
 
     if (arguments.showIcons && !SetConsoleOutputCP(65001))
     {
