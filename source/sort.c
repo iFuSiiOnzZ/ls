@@ -11,43 +11,51 @@ static char GetContentType(const asset_t *data)
     return 'z';
 }
 
-int OrderByDirectoryFirst(const asset_t *a, const asset_t *b)
+int OrderByDirectoryFirst(const void *lhv, const void *rhv)
 {
+    const asset_t *a = lhv; const asset_t *b = rhv;
     return GetContentType(a) - GetContentType(b);
 }
 
-int OrderByName(const asset_t *a, const asset_t *b)
+int OrderByName(const void *lhv, const void *rhv)
 {
+    const asset_t *a = lhv; const asset_t *b = rhv;
     return _strcmpi(a->name, b->name);
 }
 
-int OrderByGroup(const asset_t *a, const asset_t *b)
+int OrderByGroup(const void *lhv, const void *rhv)
 {
+    const asset_t *a = lhv; const asset_t *b = rhv;
     return _strcmpi(a->domain, b->domain);
 }
 
-int OrderByOwner(const asset_t *a, const asset_t *b)
+int OrderByOwner(const void *lhv, const void *rhv)
 {
+    const asset_t *a = lhv; const asset_t *b = rhv;
     return _strcmpi(a->owner, b->owner);
 }
 
-int OrderBySize(const asset_t *a, const asset_t *b)
+int OrderBySize(const void *lhv, const void *rhv)
 {
+    const asset_t *a = lhv; const asset_t *b = rhv;
     return (int)((long long)b->size - (long long)a->size);
 }
 
-int OrderByCreationTimestamp(const asset_t *a, const asset_t *b)
+int OrderByCreationTimestamp(const void *lhv, const void *rhv)
 {
+    const asset_t *a = lhv; const asset_t *b = rhv;
     return (int)((long long)b->timestamp.creation - (long long)a->timestamp.creation);
 }
 
-int OrderByAccessedTimestamp(const asset_t *a, const asset_t *b)
+int OrderByAccessedTimestamp(const void *lhv, const void *rhv)
 {
+    const asset_t *a = lhv; const asset_t *b = rhv;
     return (int)((long long)b->timestamp.access - (long long)a->timestamp.access);
 }
 
-int OrderByModifiedTimestamp(const asset_t *a, const asset_t *b)
+int OrderByModifiedTimestamp(const void *lhv, const void *rhv)
 {
+    const asset_t *a = lhv; const asset_t *b = rhv;
     return (int)((long long)b->timestamp.modification - (long long)a->timestamp.modification);
 }
 
