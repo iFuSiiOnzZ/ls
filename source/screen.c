@@ -1,4 +1,5 @@
 #include "screen.h"
+#include "types.h"
 #include "utils.h"
 #include "win32.h"
 
@@ -16,7 +17,7 @@
 #define CLAMP(v, l, h) MIN(h, MAX(l, v))
 
 // Colorize the output or not
-static BOOL g_PrintWithColor = FALSE;
+global_variable BOOL g_PrintWithColor = FALSE;
 
 // Maximum number of columns
 #define MAX_NUM_COLS 64
@@ -81,7 +82,7 @@ typedef struct row_t
  * @param fmt       format of the text or the text itself
  * @param ...       variable arguments list
  */
-static void color_printf(text_color_t textColor, const char *fmt, ...)
+local_function void color_printf(text_color_t textColor, const char *fmt, ...)
 {
     if (!g_PrintWithColor)
     {
@@ -127,7 +128,7 @@ static void color_printf(text_color_t textColor, const char *fmt, ...)
  * @param fmt       format of the text or the text itself
  * @param ...       variable arguments list
  */
-static void color_printf_vt(int r, int g, int b, const char *fmt, ...)
+local_function void color_printf_vt(int r, int g, int b, const char *fmt, ...)
 {
     if (!g_PrintWithColor)
     {
@@ -166,7 +167,7 @@ static void color_printf_vt(int r, int g, int b, const char *fmt, ...)
  * @param asset         pointer to the asset (file or directory)
  * @return ETextColor   the color used for printing
  */
-static text_color_t GetTextNameColor(const asset_t *asset)
+local_function text_color_t GetTextNameColor(const asset_t *asset)
 {
     text_color_t textColor = WHITE;
 
@@ -209,7 +210,7 @@ static text_color_t GetTextNameColor(const asset_t *asset)
  * @param data      pointer to the asset data structure
  * @return char     'd', 'l' or '-'
  */
-static char GetContentType(const asset_t *data)
+local_function char GetContentType(const asset_t *data)
 {
     // NOTE(Andrei): Order dependency, a symlink can also have
     //               the directory attribute marked.
@@ -227,7 +228,7 @@ static char GetContentType(const asset_t *data)
  * @param showIcons take into account the icons?
  * @return row_t    number of columns
  */
-static row_t GetNumberOfColumns(const directory_t *content, BOOL showIcons, size_t padding)
+local_function row_t GetNumberOfColumns(const directory_t *content, BOOL showIcons, size_t padding)
 {
     size_t totalSize = 0;
     size_t width = 0, height = 0;

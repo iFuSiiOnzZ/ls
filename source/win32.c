@@ -1,4 +1,5 @@
 #include "win32.h"
+#include "types.h"
 
 #include <AccCtrl.h>
 #include <AclAPI.h>
@@ -12,11 +13,11 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static const char *GetLastErrorAsString()
+local_function const char *GetLastErrorAsString()
 {
 
     DWORD errorMessageID = GetLastError();
-    static char buffer[4096]; buffer[0] = '\0';
+    local_variable char buffer[4096]; buffer[0] = '\0';
 
     if (errorMessageID == 0)
     {

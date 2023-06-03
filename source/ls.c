@@ -1,4 +1,5 @@
 
+#include "types.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -18,7 +19,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static const char VERSION[] = "0.0.1 "__DATE__" "__TIME__;
+global_variable const char VERSION[] = "0.0.1 "__DATE__" "__TIME__;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -29,7 +30,7 @@ static const char VERSION[] = "0.0.1 "__DATE__" "__TIME__;
  * @param arg           string with the arguments, each letter is a argument
  * @param arguments     pointer to arguments data structure where data is stored
  */
-static void ParseShortArgument(const char *arg, arguments_t *arguments)
+local_function void ParseShortArgument(const char *arg, arguments_t *arguments)
 {
     for (const char *c = arg; *c != '\0'; ++c)
     {
@@ -54,7 +55,7 @@ static void ParseShortArgument(const char *arg, arguments_t *arguments)
  * @param arguments     pointer to argument structure where data is stored
  * @return              pointer to the next argument
  */
-static const char **ParseLongArgument(const char **arg, arguments_t *arguments)
+local_function const char **ParseLongArgument(const char **arg, arguments_t *arguments)
 {
     if (strcmp(*arg, "--group-directories-first") == 0)
     {
@@ -159,7 +160,7 @@ static const char **ParseLongArgument(const char **arg, arguments_t *arguments)
  * @param argv          pointer of char array, the arguments
  * @return arguments_t the data structure of the arguments parsed
  */
-static arguments_t ParseArguments(int argc, const char **argv)
+local_function arguments_t ParseArguments(int argc, const char **argv)
 {
     arguments_t retData = { 0 };
     const char **currentArg = argv + 1;
@@ -229,14 +230,14 @@ int main(int argc, char *argv[])
         return EXIT_SUCCESS;
     }
 
-    if (arguments.currentDir == NULL)
+    if (arguments.headDir == NULL)
     {
         AddDirectoryToList(&arguments, GetWorkingDirectory());
     }
 
-    while (arguments.currentDir != NULL)
+    while (arguments.headDir != NULL)
     {
-        directory_list_t *dir = arguments.currentDir;
+        directory_list_t *dir = arguments.headDir;
         directory_t *directory = GetDirectoryContent(dir->path, &arguments);
 
         if (directory == NULL)
@@ -256,16 +257,16 @@ int main(int argc, char *argv[])
         if (arguments.showLongFormat)
         {
             PrintAssetLongFormat(directory, dir->path, &arguments);
-            if (arguments.currentDir->next != NULL) printf_s("\n\n");
+            if (arguments.headDir->next != NULL) printf_s("\n\n");
         }
         else
         {
             PrintAssetShortFormat(directory, &arguments);
-            if (arguments.currentDir->next != NULL) printf_s("\n\n");
+            if (arguments.headDir->next != NULL) printf_s("\n\n");
         }
 
     next_dir:
-        arguments.currentDir = arguments.currentDir->next;
+        arguments.headDir = arguments.headDir->next;
         CHECK_DELETE(directory);
         CHECK_DELETE(dir);
     }

@@ -1,4 +1,5 @@
 #include "directory.h"
+#include "types.h"
 #include "win32.h"
 #include "utils.h"
 
@@ -22,7 +23,7 @@
  * @param path      relative path
  * @return BOOL     TRUE if it is '.' or '..', FALSE otherwise
  */
-static BOOL IsDotPath(const char *path)
+local_function BOOL IsDotPath(const char *path)
 {
     return strcmp(path, ".") == 0 || strcmp(path, "..") == 0;
 }
@@ -35,7 +36,7 @@ static BOOL IsDotPath(const char *path)
  * @param name          asset name
  * @return BOOL        TRUE if it hidden or dot, FALSE otherwise
  */
-static BOOL IsHiddenOrDot(size_t attributes, const char *name)
+local_function BOOL IsHiddenOrDot(size_t attributes, const char *name)
 {
     return IS_HIDDEN(attributes) || name[0] == '.' || name[0] == '$';
 }
@@ -47,7 +48,7 @@ static BOOL IsHiddenOrDot(size_t attributes, const char *name)
  * @param suffix    suffix to search into the string
  * @return BOOL     TRUE if it ends with the suffix, FALSE otherwise
  */
-static BOOL StringEndsWith(const char *str, const char *suffix)
+local_function BOOL StringEndsWith(const char *str, const char *suffix)
 {
     if (!str || !suffix) return FALSE;
 
@@ -73,7 +74,7 @@ static BOOL StringEndsWith(const char *str, const char *suffix)
  * @param asset     pointer to the asset of date is stored
  * @return BOOL     TRUE if can be converted, FALSE otherwise
  */
-static BOOL GetTimestaps(const WIN32_FIND_DATAA *fd, const arguments_t *arguments, asset_t *asset)
+local_function BOOL GetTimestaps(const WIN32_FIND_DATAA *fd, const arguments_t *arguments, asset_t *asset)
 {
     memset(asset->date, 0, DATE_SIZE);
     ULARGE_INTEGER ul = { 0 };
@@ -100,11 +101,12 @@ static BOOL GetTimestaps(const WIN32_FIND_DATAA *fd, const arguments_t *argument
     {
         case SORT_BY_LAST_ACCESSED: FileTimeToSystemTime(&fd->ftLastAccessTime, &systemTime); break;
         case SORT_BY_LAST_MODIFIED: FileTimeToSystemTime(&fd->ftLastWriteTime, &systemTime); break;
+        default: break; // Don't change sort
     }
 
     // NOTE(Andrei): SystemTime month starts with 1
     //               so add padding value for 0.
-    static const char *m[13] =
+    local_variable const char *m[13] =
     {
         "", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -139,7 +141,7 @@ static BOOL GetTimestaps(const WIN32_FIND_DATAA *fd, const arguments_t *argument
  * @param container pointer to the directory container
  * @return *directory_t pointer to the directory
  */
-static directory_t *ResizeAssetArray(directory_t **container)
+local_function directory_t *ResizeAssetArray(directory_t **container)
 {
     if (container == NULL || (*container) == NULL)
     {
@@ -183,7 +185,7 @@ static directory_t *ResizeAssetArray(directory_t **container)
  * @param asset                     valid pointer to the asset
  * @return const asset_metadata_t*  pointer to the metadata structure
  */
-static const asset_metadata_t *GetAssetMetadata(const asset_t *asset)
+local_function const asset_metadata_t *GetAssetMetadata(const asset_t *asset)
 {
     char name[MAX_PATH] = { 0 };
     strcpy_s(name, MAX_PATH, asset->name);
@@ -212,26 +214,26 @@ static const asset_metadata_t *GetAssetMetadata(const asset_t *asset)
     // Symlink and directory 
     if (asset->type.symlink && asset->type.directory)
     {
-        static asset_metadata_t symlinkdir = { 139, 233, 253, "", u8"\uf482" };
+        local_variable asset_metadata_t symlinkdir = { 139, 233, 253, "", u8"\uf482" };
         return &symlinkdir;
     }
 
     // Symlink and file 
     if (asset->type.symlink)
     {
-        static asset_metadata_t symlink = { 139, 233, 253, "", u8"\uf481" };
+        local_variable asset_metadata_t symlink = { 139, 233, 253, "", u8"\uf481" };
         return &symlink;
     }
 
     // Directory 
     if (asset->type.directory)
     {
-        static asset_metadata_t dir = { 80, 250, 123, "", u8"\uf74a" };
+        local_variable asset_metadata_t dir = { 80, 250, 123, "", u8"\uf74a" };
         return &dir;
     }
 
     // Any other type 
-    static asset_metadata_t oth = { 255, 255, 255, "", u8"\uf15b" };
+    local_variable asset_metadata_t oth = { 255, 255, 255, "", u8"\uf15b" };
     return &oth;
 }
 

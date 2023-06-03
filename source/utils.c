@@ -1,4 +1,5 @@
 #include "utils.h"
+#include "types.h"
 #include "win32.h"
 
 #include <stdio.h>
@@ -99,15 +100,15 @@ void AddDirectoryToList(arguments_t *arguments, const char *path)
     strncpy_s(dir->path, MAX_PATH, path, MAX_PATH);
     dir->next = NULL;
 
-    if (arguments->lastDir == NULL)
+    if (arguments->tailDir == NULL)
     {
-        arguments->lastDir = dir;
-        arguments->currentDir = arguments->lastDir;
+        arguments->tailDir = dir;
+        arguments->headDir = arguments->tailDir;
     }
     else
     {
-        arguments->lastDir->next = dir;
-        arguments->lastDir = dir;
+        arguments->tailDir->next = dir;
+        arguments->tailDir = dir;
     }
 }
 
@@ -134,8 +135,8 @@ const char *GetDirectoryFromPath(const char *path, char *buffer, size_t bufferSi
 
 const char *GetFileSizeAsText(size_t bytes)
 {
+    local_variable char buffer[256];
     double sz = (double)bytes;
-    static char buffer[256];
     char ex = 'B';
 
     if (sz > 1024.0) { sz /= 1024.0; ex = 'K'; }
@@ -161,7 +162,7 @@ const char *GetFileSizeAsText(size_t bytes)
 
 const char *GetWorkingDirectory()
 {
-    static char workingDir[MAX_PATH] = { 0 };
+    local_variable char workingDir[MAX_PATH] = { 0 };
     GetCurrentDirectoryA(MAX_PATH, workingDir);
     return workingDir;
 }

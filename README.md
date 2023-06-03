@@ -60,6 +60,9 @@ If you are using Command Prompt take into consideration to make an [alias using 
 ```bat
 # Command prompt
 doskey ls=ls.exe --icons --colors --virterm --group-directories-first $*
+
+# For set a permanent alias create a file with the alias end add it to the register
+reg add "HKEY_LOCAL_MACHINE\Software\Microsoft\Command Processor" /v Autorun /d "doskey /macrofile=\"<file-path>\"" /f
 ```
 
 ```powershell

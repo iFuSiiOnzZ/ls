@@ -13,11 +13,20 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-// Check if pointer is not NULL, free it and assign NULL to it
+/** @brief Check if pointer is not NULL, free it and assign NULL to it. */
 #define CHECK_DELETE(x) do { if(x) { free(x); x = NULL; } } while(0)
 
-// Compute the size of compile time array
+/** @brief Compute the size of compile time array. */
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+
+/** @brief Function local linkage. */
+#define local_function static
+
+/** @brief Each compilation unit will have a copy of it. */
+#define global_variable static
+
+/** @brief Keep the values between executions.*/
+#define local_variable static
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -26,17 +35,31 @@
  */
 typedef enum sort_by_e
 {
+    /** @brief Do not sort (OS read order). */
     SORT_NONE,
+
+    /** @brief Display directories first. */
     SORT_DIRECTORY_FIRST,
 
+    /** @brief Sort by the size (greater to smaller). */
     SORT_BY_SIZE,
+
+    /** @brief Sort by name (alphabetically). */
     SORT_BY_NAME,
 
+    /** @brief Sort by group name (alphabetically). */
     SORT_BY_GROUP,
+
+    /** @brief Sort by owner name (alphabetically). */
     SORT_BY_OWNER,
 
+    /** @brief Sort by creation date. */
     SORT_BY_CREATION_DATE,
+
+    /** Sort by modification date. */
     SORT_BY_LAST_MODIFIED,
+
+    /** Sort by access date . */
     SORT_BY_LAST_ACCESSED
 } sort_by_e;
 
@@ -62,15 +85,16 @@ typedef struct asset_metadata_t
 
 /**
  * @brief User access rights for a given asset.
- *
- * 'read'       : read permissions      'r'
- * 'write'      : write permissions     'w'
- * 'execution'  : execution permissions 'x'
  */
 typedef struct access_rights_t
 {
+    /** @brief User has read access ('r'). */
     BOOL read;
+
+    /** @brief User has write access ('w'). */
     BOOL write;
+
+    /** @brief User has execution access ('x'). */
     BOOL execution;
 } access_rights_t;
 
@@ -80,31 +104,44 @@ typedef struct access_rights_t
  */
 typedef struct asset_type_t
 {
+    /** @brief Is a directory. */
     unsigned int directory : 1;
+
+    /** @brief Is a document. */
     unsigned int document : 1;
 
+    /** @brief Is a compress document. */
     unsigned int compressed : 1;
+
+    /** @brief Is an encrypted document. */
     unsigned int encrypted : 1;
 
+    /** @brief Is a temporary document. */
     unsigned int temporary : 1;
+
+    /** @brief Is a system document (Windows special file). */
     unsigned int system : 1;
 
+    /** @brief Is a symbolic link. */
     unsigned int symlink : 1;
+
+    /** @brief Is a hidden document/directory. */
     unsigned int hidden : 1;
 } asset_type_t;
 
 /**
  * @brief Information about the creation date,
  * last modification and write of the asset.
- *
- * 'access'         : last time it was accessed
- * 'creation'       : asset creation timestamp
- * 'modification'   : last time it was modify
  */
 typedef struct timestamp_t
 {
+    /** @brief Last access time. */
     unsigned long long access;
+
+    /** @brief Create time-date. */
     unsigned long long creation;
+
+    /** @brief Last modification time. */
     unsigned long long modification;
 } timestamp_t;
 
@@ -195,29 +232,49 @@ typedef struct directory_list_t
  */
 typedef struct arguments_t
 {
+    /** @brief Show all files (hidden included). */
     BOOL showAll;
+
+    /** @brief Show all files (hidden includes but not "." and ".."). */
     BOOL showAlmostAll;
+
+    /** @brief Show file information (date, permissions, owner, etc). */
     BOOL showLongFormat;
 
+    /** @brie Revers the sort order. */
     BOOL reverseOrder;
+
+    /** @brief List current directory and the subdirectories. */
     BOOL recursiveList;
 
+    /** @brief Colorieze the output. */
     BOOL colors;
+
+    /** @brief Show the file/directory icon.*/
     BOOL showIcons;
 
+    /** @brief Show the list of available commands. */
     BOOL showHelp;
+
+    /** @brief Show the program version. */
     BOOL showVersion;
 
+    /** @brief This the colors, icons the file extensions available. */
     BOOL showMetaData;
+
+    /** @brief Use virtual terminal for better color output. */
     BOOL virtualTerminal;
 
+    /** @brief Which field is used for sorting (name, size, owner, etc). */
     sort_by_e sortField;
-    directory_list_t *currentDir, *lastDir;
+
+    /** @brief Linked list of the directories to list. */
+    directory_list_t *headDir, *tailDir;
 } arguments_t;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-static const asset_metadata_t g_AssetFullNameMetaData[] =
+global_variable const asset_metadata_t g_AssetFullNameMetaData[] =
 {
     // System predefined directory
     {230  ,  57  ,  70  ,             "windows"  ,               u8"\ue70f"}  ,  // 
@@ -268,7 +325,7 @@ static const asset_metadata_t g_AssetFullNameMetaData[] =
     {255  , 180  , 216  ,      "cmakelists.txt"  ,               u8"\uf425"}  ,  // 
 };
 
-static const asset_metadata_t g_AssetExtensionMetaData[] =
+global_variable const asset_metadata_t g_AssetExtensionMetaData[] =
 {
     // Windows executable and libraries
     {229  , 107  , 111  ,                ".exe"  ,               u8"\ufb13"}  ,  // ﬓ

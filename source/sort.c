@@ -1,9 +1,10 @@
 #include "sort.h"
+#include "types.h"
 
 #include <stdlib.h>
 #include <string.h>
 
-static char GetContentType(const asset_t *data)
+local_function char GetContentType(const asset_t *data)
 {
     if (data->type.symlink)     return 'l';
     if (data->type.directory)   return 'd';
